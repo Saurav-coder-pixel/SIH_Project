@@ -2,7 +2,9 @@
 
 You are building "Nook" for Smart India Hackathon 2026 (Problem Statement ID 26199,
 Theme: Miscellaneous). Full architecture reference: see docs/architecture-spec.md.
-Do not deviate from this stack or data model without asking first.
+UI/design system reference: see docs/design.md — read this before building any
+screen or widget. Do not deviate from this stack, data model, or design system
+without asking first.
 
 ## Core product loop (build this end-to-end before anything else)
 1. User picks role: "Find a service/professional" OR "Offer a skill/service"
@@ -81,6 +83,28 @@ P2 (architect the contract now, activate later): full notification engine,
 8. Provider accepts
 9. In-app chat opens — exact home address stays hidden throughout
 10. Analytics records the full funnel (need -> match -> request -> accepted)
+
+## Multi-contributor sessions — READ THIS FIRST, EVERY SESSION
+This project has multiple team members, each running their own Antigravity
+session (possibly on different machines, different days). A single agent
+session can also hit a usage/turn limit mid-task. To avoid duplicated or
+conflicting work:
+
+1. Before writing any code, read PROGRESS_LOG.md in full — not just this
+   file. Check its "IN PROGRESS / BLOCKED" section first. If something is
+   marked in-progress or blocked, resume and finish that work before
+   starting anything new, unless the user tells you otherwise.
+2. Before ending the session — or the moment you sense you're about to hit
+   a usage/turn/context limit — stop and write a new entry in
+   PROGRESS_LOG.md under "SESSION LOG" using the template already in that
+   file. Also update "IN PROGRESS / BLOCKED" and "NEXT UP" so the next
+   contributor knows exactly where to resume. Do this even if the task
+   feels unfinished — a half-done task with a clear log entry is far more
+   useful to a teammate than a silently abandoned one.
+3. Never overwrite or delete a previous log entry. Append only.
+4. If you make an architectural or scope decision not already covered in
+   this file or docs/, record it in PROGRESS_LOG.md's "DECISIONS LOG" so
+   other contributors' sessions don't contradict it later.
 
 ## Before writing code
 Confirm the data model (docs/data-model.md) and API contract
