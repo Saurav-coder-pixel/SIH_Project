@@ -32,7 +32,7 @@ class _ReportModalState extends State<ReportModal> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       decoration: const BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: AppTheme.cardDark,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -41,20 +41,20 @@ class _ReportModalState extends State<ReportModal> {
         children: [
           const Text(
             'Report or Block User',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textNearBlack),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textWhite),
           ),
           const SizedBox(height: 4),
           const Text(
             'Help keep Nook safe. Reports are reviewed by community moderators.',
-            style: TextStyle(fontSize: 12, color: AppTheme.textGray),
+            style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
           ),
           const SizedBox(height: 16),
 
-          ..._reasons.map((r) => RadioListTile<String>(
-                title: Text(r['label']!),
+              ..._reasons.map((r) => RadioListTile<String>(
+                title: Text(r['label']!, style: const TextStyle(color: AppTheme.textWhite)),
                 value: r['value']!,
                 groupValue: _selectedReason,
-                activeColor: AppTheme.primaryIndigo,
+                activeColor: AppTheme.primaryPurple,
                 contentPadding: EdgeInsets.zero,
                 onChanged: (val) {
                   if (val != null) setState(() => _selectedReason = val);
@@ -65,10 +65,12 @@ class _ReportModalState extends State<ReportModal> {
           TextField(
             controller: _commentController,
             maxLines: 2,
+            style: const TextStyle(color: AppTheme.textWhite),
             decoration: const InputDecoration(
               hintText: 'Additional details or evidence reference...',
+              hintStyle: TextStyle(color: AppTheme.textMuted),
               filled: true,
-              fillColor: AppTheme.backgroundLight,
+              fillColor: AppTheme.backgroundDark,
             ),
           ),
           const SizedBox(height: 20),

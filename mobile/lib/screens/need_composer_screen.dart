@@ -24,7 +24,7 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
     final provider = Provider.of<AppProvider>(context);
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
         title: const Text('Describe Your Need'),
         elevation: 0,
@@ -37,9 +37,9 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
             // Textarea Input
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.cardWhite,
+                color: AppTheme.cardDark,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.borderLight),
+                border: Border.all(color: AppTheme.cardDarkElevated),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -48,14 +48,14 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.auto_awesome, color: AppTheme.primaryIndigo, size: 20),
+                        Icon(Icons.auto_awesome, color: AppTheme.primaryPurple, size: 20),
                         SizedBox(width: 8),
                         Text(
                           'Natural Language Input',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryIndigo,
+                            color: AppTheme.primaryPurple,
                           ),
                         ),
                       ],
@@ -64,8 +64,10 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
                     TextField(
                       controller: _textController,
                       maxLines: 4,
+                      style: const TextStyle(color: AppTheme.textWhite),
                       decoration: const InputDecoration(
                         hintText: "e.g. 'I need a product photographer for catalog shoot this week' or 'Need an electrician for short circuit repair today'",
+                        hintStyle: TextStyle(color: AppTheme.textMuted),
                         border: InputBorder.none,
                       ),
                     ),
@@ -78,7 +80,7 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
             // Urgency Selector
             const Text(
               'Urgency / Timeline',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textNearBlack),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textWhite),
             ),
             const SizedBox(height: 8),
             Row(
@@ -98,11 +100,11 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
               children: [
                 const Text(
                   'Search Radius',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textNearBlack),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textWhite),
                 ),
                 Text(
                   '${provider.searchRadiusKm.toInt()} km',
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryIndigo),
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryPurple),
                 ),
               ],
             ),
@@ -111,7 +113,7 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
               min: 1,
               max: 20,
               divisions: 19,
-              activeColor: AppTheme.primaryIndigo,
+              activeColor: AppTheme.primaryPurple,
               onChanged: (val) => provider.setSearchRadius(val),
             ),
 
@@ -149,13 +151,13 @@ class _NeedComposerScreenState extends State<NeedComposerScreen> {
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
-      selectedColor: AppTheme.primaryIndigo,
+      selectedColor: AppTheme.primaryPurple,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : AppTheme.textNearBlack,
+        color: isSelected ? Colors.white : AppTheme.textWhite,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
-      backgroundColor: AppTheme.cardWhite,
-      side: const BorderSide(color: AppTheme.borderLight),
+      backgroundColor: AppTheme.cardDark,
+      side: const BorderSide(color: AppTheme.cardDarkElevated),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       onSelected: (selected) {
         if (selected) setState(() => _selectedUrgency = value);

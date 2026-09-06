@@ -23,7 +23,7 @@ class NookApp extends StatelessWidget {
     return MaterialApp(
       title: 'Nook — Hyperlocal Connection Platform',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkTheme,
       home: const RoleSelectionScreen(),
     );
   }

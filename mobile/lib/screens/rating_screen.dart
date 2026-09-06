@@ -25,9 +25,11 @@ class _RatingScreenState extends State<RatingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
         title: Text('Rate & Review ${widget.partnerName}'),
+        iconTheme: const IconThemeData(color: AppTheme.textWhite),
+        titleTextStyle: const TextStyle(color: AppTheme.textWhite, fontSize: 20),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -38,12 +40,12 @@ class _RatingScreenState extends State<RatingScreen> {
             Text(
               'How was your interaction with ${widget.partnerName}?',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textNearBlack),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textWhite),
             ),
             const SizedBox(height: 8),
             const Text(
               'Ratings help keep the Nook community safe and reliable.',
-              style: TextStyle(fontSize: 13, color: AppTheme.textGray),
+              style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
             ),
             const SizedBox(height: 24),
 
@@ -65,7 +67,7 @@ class _RatingScreenState extends State<RatingScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Quick Feedback Tags',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textNearBlack),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textWhite),
               ),
             ),
             const SizedBox(height: 10),
@@ -77,13 +79,13 @@ class _RatingScreenState extends State<RatingScreen> {
                 return FilterChip(
                   label: Text(tag),
                   selected: isSelected,
-                  selectedColor: AppTheme.primaryIndigo,
+                  selectedColor: AppTheme.primaryPurple,
                   labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : AppTheme.textNearBlack,
+                    color: isSelected ? Colors.white : AppTheme.textWhite,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
-                  backgroundColor: AppTheme.cardWhite,
-                  side: const BorderSide(color: AppTheme.borderLight),
+                  backgroundColor: AppTheme.cardDark,
+                  side: const BorderSide(color: AppTheme.cardDarkElevated),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
                   onSelected: (selected) {
                     setState(() {
@@ -105,13 +107,15 @@ class _RatingScreenState extends State<RatingScreen> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Add an optional comment...',
-                fillColor: AppTheme.cardWhite,
+                hintStyle: const TextStyle(color: AppTheme.textMuted),
+                fillColor: AppTheme.cardDark,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: AppTheme.borderLight),
+                  borderSide: const BorderSide(color: AppTheme.cardDarkElevated),
                 ),
               ),
+              style: const TextStyle(color: AppTheme.textWhite),
             ),
 
             const Spacer(),

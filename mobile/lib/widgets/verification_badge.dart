@@ -8,18 +8,16 @@ class VerificationBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String label = 'Tier 1 Verified';
-    Color iconColor = AppTheme.primaryIndigo;
-    Color bgColor = AppTheme.primaryIndigo.withOpacity(0.1);
+    String label = 'Verified';
+    Color iconColor = AppTheme.successGreen;
+    Color bgColor = AppTheme.successGreen.withOpacity(0.1);
 
     if (tier == 3) {
-      label = 'Tier 3 Regulated';
-      iconColor = AppTheme.trustGreenText;
-      bgColor = AppTheme.trustGreenBg;
+      label = 'Regulated';
     } else if (tier == 2) {
-      label = 'Tier 2 Provider';
-      iconColor = AppTheme.primaryIndigo;
-      bgColor = AppTheme.primaryIndigo.withOpacity(0.1);
+      label = 'Provider';
+    } else {
+      label = 'Verified';
     }
 
     return Container(
@@ -31,7 +29,7 @@ class VerificationBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.verified, size: 14, color: iconColor),
+          Icon(Icons.check_circle, size: 14, color: iconColor),
           const SizedBox(width: 4),
           Text(
             label,
