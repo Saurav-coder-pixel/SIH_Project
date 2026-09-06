@@ -56,7 +56,49 @@ already in AGENTS.md, so nobody re-litigates or contradicts them later.)
 ---
 
 ## SESSION LOG
-(Newest entry at the top. Copy the template below for each new entry.)
+### [2026-09-06 14:55] — Contributor: Antigravity — Module(s): flutter-mobile-app, UI Refactor
+STATUS: Completed
+WHAT WAS DONE:
+- Fully overhauled the mobile UI to match the new Dark Mode Figma design.
+- Re-themed `AppTheme` with the dark color palette (`backgroundDark`, `primaryPurple`, etc.) and Poppins/Inter typography.
+- Refactored all core screens: `home_screen.dart` (Map view), `results_screen.dart` (Nearby List), `role_selection_screen.dart` (Onboarding), `connections_screen.dart` (Messages tab), and `chat_screen.dart`.
+- Created new screens: `profile_detail_screen.dart` and `notifications_screen.dart`.
+- Updated all remaining dialogs and secondary dashboards (`rating_screen.dart`, `report_modal.dart`, `verification_dashboard_screen.dart`, `admin_dashboard_screen.dart`, `connection_request_modal.dart`) to the Dark Mode tokens.
+- Ran `flutter analyze` and resolved all 108 compilation errors resulting from the theme migration. App compiles cleanly.
+WHAT'S NOT DONE / KNOWN ISSUES:
+- Only existing non-blocking lint warnings (e.g. deprecated `withOpacity`) remain.
+BLOCKED ON (if applicable):
+- None.
+NEXT STEP FOR WHOEVER PICKS THIS UP:
+- Proceed with cloud scaling/backend deployment or live Redis/RabbitMQ queue integration (P1/P2 architecture).
+
+### [2026-09-05 15:00] — Contributor: GitHub Copilot — Module(s): flutter-mobile-app, home-map
+STATUS: Completed
+WHAT WAS DONE:
+- Added google_maps_flutter to mobile/pubspec.yaml.
+- Replaced the simulated home locality zone with a GoogleMap in mobile/lib/screens/home_screen.dart.
+- Added an approximate Koramangala locality center and search-radius circle; no exact user marker or address is exposed.
+- Ran flutter pub get and flutter analyze successfully; only existing deprecation and unused-field warnings remain.
+WHAT'S NOT DONE / KNOWN ISSUES:
+- The mobile project currently has no Android, iOS, or web host directories, so a Google Maps API key has not been configured. A platform host and restricted key are required for map tiles at runtime.
+BLOCKED ON (if applicable):
+- A Google Maps API key and selected target platform for host configuration.
+NEXT STEP FOR WHOEVER PICKS THIS UP:
+- Run flutter create . for the intended target platform, then add the restricted Maps key to that platform's manifest/index configuration.
+
+### [2026-09-05 14:30] — Contributor: GitHub Copilot — Module(s): flutter-mobile-app, local-runtime
+STATUS: Completed
+WHAT WAS DONE:
+- Fixed Flutter startup compilation in mobile/lib/theme/app_theme.dart, mobile/lib/screens/connections_screen.dart, and mobile/lib/screens/chat_screen.dart.
+- Verified the mobile project with flutter analyze; only existing deprecation and unused-field warnings remain.
+- Installed dependencies and launched the Flutter app in Chrome successfully.
+- Started the Node.js API on port 5000; MongoDB was unavailable, so the server entered its configured standalone fallback mode.
+WHAT'S NOT DONE / KNOWN ISSUES:
+- MongoDB is not running locally, so database-backed API flows will not persist data during this run.
+BLOCKED ON (if applicable):
+- None for local UI startup.
+NEXT STEP FOR WHOEVER PICKS THIS UP:
+- Start MongoDB locally before validating persistence-backed demo flows.
 
 ### [2026-09-04 21:05] — Contributor: Antigravity — Module(s): flutter-mobile-app, mongodb-full-schemas
 STATUS: Completed

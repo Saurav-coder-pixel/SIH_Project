@@ -7,9 +7,11 @@ class AdminDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
         title: const Text('Nook Admin & Concierge Dashboard'),
+        iconTheme: const IconThemeData(color: AppTheme.textWhite),
+        titleTextStyle: const TextStyle(color: AppTheme.textWhite, fontSize: 20),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -22,11 +24,11 @@ class AdminDashboardScreen extends StatelessWidget {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Active Locality: Koramangala, Bengaluru', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Active Locality: Koramangala, Bengaluru', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textWhite)),
                   SizedBox(height: 4),
-                  Text('Status: LAUNCHED (124 Providers, 89 Seekers)', style: TextStyle(color: AppTheme.trustGreenText, fontSize: 13)),
+                  Text('Status: LAUNCHED (124 Providers, 89 Seekers)', style: TextStyle(color: AppTheme.successGreen, fontSize: 13)),
                   SizedBox(height: 4),
-                  Text('Supply Gap Alert: Event Decorators & Doctors low density', style: TextStyle(color: Colors.orange, fontSize: 12)),
+                  Text('Supply Gap Alert: Event Decorators & Doctors low density', style: TextStyle(color: AppTheme.starGold, fontSize: 12)),
                 ],
               ),
             ),
@@ -38,7 +40,7 @@ class AdminDashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Invite local professionals directly via SMS/WhatsApp referral'),
+                  const Text('Invite local professionals directly via SMS/WhatsApp referral', style: TextStyle(color: AppTheme.textMuted)),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.person_add_alt, size: 16),
@@ -74,11 +76,11 @@ class AdminDashboardScreen extends StatelessWidget {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Target Respondents Approached: 24 / 25'),
+                  Text('Target Respondents Approached: 24 / 25', style: TextStyle(color: AppTheme.textMuted)),
                   SizedBox(height: 4),
-                  Text('Top Trust Concern: "Exposing exact home address before meeting"'),
+                  Text('Top Trust Concern: "Exposing exact home address before meeting"', style: TextStyle(color: AppTheme.textWhite)),
                   SizedBox(height: 4),
-                  Text('Willingness to connect via Nook: HIGH (92%)'),
+                  Text('Willingness to connect via Nook: HIGH (92%)', style: TextStyle(color: AppTheme.successGreen)),
                 ],
               ),
             ),
@@ -89,14 +91,19 @@ class AdminDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildAdminCard({required String title, required Widget child}) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.cardDark,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.cardDarkElevated),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textNearBlack)),
-            const Divider(height: 20),
+            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textWhite)),
+            const Divider(height: 20, color: AppTheme.cardDarkElevated),
             child,
           ],
         ),
@@ -118,8 +125,8 @@ class _MetricRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: AppTheme.textGray, fontSize: 13)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryIndigo)),
+          Text(label, style: const TextStyle(color: AppTheme.textMuted, fontSize: 13)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryPurple)),
         ],
       ),
     );

@@ -9,186 +9,274 @@ class ConnectionsScreen extends StatefulWidget {
   State<ConnectionsScreen> createState() => _ConnectionsScreenState();
 }
 
-class _ConnectionsScreenState extends State<ConnectionsScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ConnectionsScreenState extends State<ConnectionsScreen> {
+  int _selectedTab = 0; // 0 for Primary, 1 for Requests
 
-  final List<Map<String, dynamic>> _activeConnections = [
+  final List<Map<String, dynamic>> _messages = [
     {
       'id': 'conn_1',
-      'name': 'Ananya Verma',
-      'profession': 'Commercial Product Photographer',
-      'locality': 'Indiranagar, Bengaluru',
+      'name': 'Priya Sharma',
+      'profession': 'Cardiologist',
+      'lastMsg': 'The clinic is open until 8 PM today.',
+      'time': '2m ago',
+      'unread': 2,
+      'online': true,
       'phone': '+919876543210',
-      'lastMsg': 'Sure! I can come by tomorrow afternoon...',
-      'tier': 2,
     },
     {
       'id': 'conn_2',
-      'name': 'Rajesh Kumar',
-      'profession': 'Licensed Electrician',
-      'locality': 'Koramangala, Bengaluru',
+      'name': 'Rahul Verma',
+      'profession': 'Electrician',
+      'lastMsg': 'I can come by tomorrow morning.',
+      'time': '1h ago',
+      'unread': 0,
+      'online': false,
       'phone': '+919811223344',
-      'lastMsg': 'I can inspect the switchboard at 4 PM.',
-      'tier': 2,
     },
-  ];
-
-  final List<Map<String, dynamic>> _pendingRequests = [
     {
-      'id': 'req_1',
-      'name': 'Vikram Seth',
-      'profession': 'Event Decorator',
-      'locality': 'Whitefield, Bengaluru',
-      'message': 'Hi, saw your requirement for event decoration.',
+      'id': 'conn_3',
+      'name': 'Dr. Anil Gupta',
+      'profession': 'Pediatrician',
+      'lastMsg': 'Please bring the previous reports.',
+      'time': 'Yesterday',
+      'unread': 0,
+      'online': true,
+      'phone': '+919988776655',
     },
   ];
-
-  @override
-  void initState() {
-    super.initState() {
-      _tabController = TabController(length: 2, vsync: this);
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
-      appBar: AppBar(
-        title: const Text('My Connections & Requests'),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppTheme.primaryIndigo,
-          unselectedLabelColor: AppTheme.textGray,
-          indicatorColor: AppTheme.primaryIndigo,
-          tabs: const [
-            Tab(text: 'Active Connections'),
-            Tab(text: 'Pending Requests'),
+      backgroundColor: AppTheme.backgroundDark,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              child: Text(
+                'Messages',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.textWhite,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+
+            // Segmented Tabs
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardDark,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _selectedTab = 0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: _selectedTab == 0 ? AppTheme.cardDarkElevated : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Primary',
+                            style: TextStyle(
+                              color: _selectedTab == 0 ? AppTheme.textWhite : AppTheme.textMuted,
+                              fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _selectedTab = 1),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: _selectedTab == 1 ? AppTheme.cardDarkElevated : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Requests (2)',
+                            style: TextStyle(
+                              color: _selectedTab == 1 ? AppTheme.textWhite : AppTheme.textMuted,
+                              fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardDark,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.search, color: AppTheme.textMuted, size: 20),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Search messages...',
+                        style: TextStyle(color: AppTheme.textMuted, fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Message List
+            Expanded(
+              child: _selectedTab == 0
+                  ? ListView.builder(
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = _messages[index];
+                        return _buildMessageTile(msg);
+                      },
+                    )
+                  : const Center(
+                      child: Text(
+                        'You have 2 pending connection requests.',
+                        style: TextStyle(color: AppTheme.textMuted),
+                      ),
+                    ),
+            ),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Active Connections List
-          ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: _activeConnections.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final conn = _activeConnections[index];
-              return Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryIndigo.withOpacity(0.12),
-                    child: Text(
-                      conn['name'][0],
-                      style: const TextStyle(color: AppTheme.primaryIndigo, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildMessageTile(Map<String, dynamic> msg) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(
+              connectionId: msg['id'],
+              partnerName: msg['name'],
+              partnerProfession: msg['profession'],
+              partnerPhone: msg['phone'],
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+        child: Row(
+          children: [
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundColor: AppTheme.cardDarkElevated,
+                  child: Text(
+                    msg['name'][0],
+                    style: const TextStyle(color: AppTheme.primaryPurple, fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                if (msg['online'] == true)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: AppTheme.successGreen,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppTheme.backgroundDark, width: 2),
+                      ),
                     ),
                   ),
-                  title: Text(conn['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${conn['profession']} • ${conn['locality']}'),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          const Icon(Icons.phone, size: 12, color: AppTheme.trustGreenText),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Phone: ${conn['phone']}',
-                            style: const TextStyle(fontSize: 11, color: AppTheme.trustGreenText, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  trailing: const Icon(Icons.chat_bubble_outline, color: AppTheme.primaryIndigo),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ChatScreen(
-                          connectionId: conn['id'],
-                          partnerName: conn['name'],
-                          partnerProfession: conn['profession'],
-                          partnerPhone: conn['phone'],
+                      Text(
+                        msg['name'],
+                        style: const TextStyle(
+                          color: AppTheme.textWhite,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-
-          // Pending Requests List
-          ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: _pendingRequests.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final req = _pendingRequests[index];
-              return Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(req['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text('${req['profession']} • ${req['locality']}', style: const TextStyle(color: AppTheme.textGray, fontSize: 13)),
-                      const SizedBox(height: 8),
-                      Text('"${req['message']}"', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13)),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
-                                setState(() => _pendingRequests.removeAt(index));
-                              },
-                              child: const Text('Decline'),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _activeConnections.add({
-                                    'id': req['id'],
-                                    'name': req['name'],
-                                    'profession': req['profession'],
-                                    'locality': req['locality'],
-                                    'phone': '+919988776655',
-                                    'lastMsg': 'Connection accepted!',
-                                    'tier': 2,
-                                  });
-                                  _pendingRequests.removeAt(index);
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Connection accepted! Chat and contact details unlocked.')),
-                                );
-                              },
-                              child: const Text('Accept'),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        msg['time'],
+                        style: TextStyle(
+                          color: msg['unread'] > 0 ? AppTheme.primaryPurple : AppTheme.textMuted,
+                          fontSize: 12,
+                          fontWeight: msg['unread'] > 0 ? FontWeight.bold : FontWeight.normal,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              );
-            },
-          ),
-        ],
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          msg['lastMsg'],
+                          style: TextStyle(
+                            color: msg['unread'] > 0 ? AppTheme.textWhite : AppTheme.textMuted,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (msg['unread'] > 0)
+                        Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: AppTheme.primaryPurple,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            msg['unread'].toString(),
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

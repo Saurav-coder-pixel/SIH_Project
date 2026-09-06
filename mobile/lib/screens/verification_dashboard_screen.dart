@@ -16,9 +16,11 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
         title: const Text('Verification & Profile Trust'),
+        iconTheme: const IconThemeData(color: AppTheme.textWhite),
+        titleTextStyle: const TextStyle(color: AppTheme.textWhite, fontSize: 20),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -38,9 +40,9 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
               isCompleted: _currentTier >= 1,
               child: const Row(
                 children: [
-                  Icon(Icons.check_circle, color: AppTheme.trustGreenText, size: 20),
+                  Icon(Icons.check_circle, color: AppTheme.successGreen, size: 20),
                   SizedBox(width: 8),
-                  Text('Phone OTP Verified (+91 98765*****)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text('Phone OTP Verified (+91 98765*****)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textWhite)),
                 ],
               ),
             ),
@@ -55,9 +57,9 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
               child: _currentTier >= 2
                   ? const Row(
                       children: [
-                        Icon(Icons.check_circle, color: AppTheme.trustGreenText, size: 20),
+                        Icon(Icons.check_circle, color: AppTheme.successGreen, size: 20),
                         SizedBox(width: 8),
-                        Text('Skilled Provider Badge Active', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        Text('Skilled Provider Badge Active', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textWhite)),
                       ],
                     )
                   : OutlinedButton(
@@ -81,9 +83,9 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
               child: _currentTier >= 3
                   ? const Row(
                       children: [
-                        Icon(Icons.check_circle, color: AppTheme.trustGreenText, size: 20),
+                        Icon(Icons.check_circle, color: AppTheme.successGreen, size: 20),
                         SizedBox(width: 8),
-                        Text('Tier 3 Regulated Professional Verified', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        Text('Tier 3 Regulated Professional Verified', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textWhite)),
                       ],
                     )
                   : Column(
@@ -91,15 +93,17 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
                       children: [
                         const Text(
                           'Mandatory for Doctors, CAs, Lawyers before public profile discovery.',
-                          style: TextStyle(fontSize: 12, color: AppTheme.textGray),
+                          style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
                         ),
                         const SizedBox(height: 8),
                         TextField(
                           controller: _licenseController,
+                          style: const TextStyle(color: AppTheme.textWhite),
                           decoration: const InputDecoration(
                             hintText: 'Enter Registration / License Number (e.g. MCI-98765)',
+                            hintStyle: TextStyle(color: AppTheme.textMuted),
                             filled: true,
-                            fillColor: AppTheme.backgroundLight,
+                            fillColor: AppTheme.cardDarkElevated,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -130,7 +134,12 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
     required bool isCompleted,
     required Widget child,
   }) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.cardDark,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.cardDarkElevated),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -140,13 +149,13 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
               children: [
                 CircleAvatar(
                   radius: 14,
-                  backgroundColor: isCompleted ? AppTheme.trustGreenBg : AppTheme.backgroundLight,
+                  backgroundColor: isCompleted ? AppTheme.successGreen.withOpacity(0.2) : AppTheme.backgroundDark,
                   child: Text(
                     '$tier',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isCompleted ? AppTheme.trustGreenText : AppTheme.textGray,
+                      color: isCompleted ? AppTheme.successGreen : AppTheme.textMuted,
                     ),
                   ),
                 ),
@@ -154,13 +163,13 @@ class _VerificationDashboardScreenState extends State<VerificationDashboardScree
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.textWhite),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
-            Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.textGray)),
+            Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.textMuted)),
             const SizedBox(height: 12),
             child,
           ],

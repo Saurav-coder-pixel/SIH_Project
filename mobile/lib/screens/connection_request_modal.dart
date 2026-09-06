@@ -36,7 +36,7 @@ class _ConnectionRequestModalState extends State<ConnectionRequestModal> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       decoration: const BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: AppTheme.cardDark,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SingleChildScrollView(
@@ -50,7 +50,7 @@ class _ConnectionRequestModalState extends State<ConnectionRequestModal> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppTheme.borderLight,
+                  color: AppTheme.cardDarkElevated,
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
@@ -63,13 +63,13 @@ class _ConnectionRequestModalState extends State<ConnectionRequestModal> {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textNearBlack,
+                color: AppTheme.textWhite,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               '${widget.candidate.profession} • ${widget.candidate.localityName}',
-              style: const TextStyle(fontSize: 13, color: AppTheme.textGray),
+              style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
             ),
             const SizedBox(height: 16),
 
@@ -82,19 +82,21 @@ class _ConnectionRequestModalState extends State<ConnectionRequestModal> {
             // Message Field
             const Text(
               'Introduce yourself / Task context',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textNearBlack),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textWhite),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _msgController,
               maxLines: 3,
+              style: const TextStyle(color: AppTheme.textWhite),
               decoration: InputDecoration(
-                fillColor: AppTheme.backgroundLight,
+                fillColor: AppTheme.backgroundDark,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppTheme.borderLight),
+                  borderSide: const BorderSide(color: AppTheme.cardDarkElevated),
                 ),
+                hintStyle: const TextStyle(color: AppTheme.textMuted),
                 hintText: 'Add details or context for your connection request...',
               ),
             ),
@@ -103,7 +105,7 @@ class _ConnectionRequestModalState extends State<ConnectionRequestModal> {
             // Budget chips
             const Text(
               'Budget Range (Optional)',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textNearBlack),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textWhite),
             ),
             const SizedBox(height: 8),
             Row(
@@ -158,13 +160,13 @@ class _ConnectionRequestModalState extends State<ConnectionRequestModal> {
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
-      selectedColor: AppTheme.primaryIndigo,
+      selectedColor: AppTheme.primaryPurple,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : AppTheme.textNearBlack,
+        color: isSelected ? Colors.white : AppTheme.textWhite,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
-      backgroundColor: AppTheme.backgroundLight,
-      side: const BorderSide(color: AppTheme.borderLight),
+      backgroundColor: AppTheme.backgroundDark,
+      side: const BorderSide(color: AppTheme.cardDarkElevated),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       onSelected: (selected) {
         if (selected) setState(() => _selectedBudget = label);

@@ -12,209 +12,186 @@ class RoleSelectionScreen extends StatelessWidget {
     final provider = Provider.of<AppProvider>(context);
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: AppTheme.backgroundDark,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              // Brand Logo / Icon
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryIndigo.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  Icons.hub_outlined,
-                  color: AppTheme.primaryIndigo,
-                  size: 32,
+        child: Column(
+          children: [
+            // Top Right Skip Button
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.cardDark,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: const Text('Skip', style: TextStyle(color: AppTheme.textWhite, fontWeight: FontWeight.bold)),
                 ),
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Welcome to Nook',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textNearBlack,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Connect with trusted professionals and skilled people living and working right in your locality.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppTheme.textGray,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 40),
+            ),
+            
+            const Spacer(),
 
-              const Text(
-                'How would you like to start?',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textNearBlack,
-                ),
+            // Graphic / Map Illustration Mockup
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              height: 280,
+              decoration: BoxDecoration(
+                color: AppTheme.backgroundDarkGrid,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.cardDarkElevated),
               ),
-              const SizedBox(height: 16),
-
-              // Option 1: Find Someone
-              _RoleCard(
-                title: 'Find someone',
-                subtitle: 'Discover verified professionals, tradespeople, or helpers nearby',
-                icon: Icons.search_rounded,
-                isSelected: provider.selectedRole == 'seeker',
-                onTap: () => provider.setRole('seeker'),
-              ),
-              const SizedBox(height: 16),
-
-              // Option 2: Be Discoverable
-              _RoleCard(
-                title: 'Offer a skill / Be discoverable',
-                subtitle: 'List your profession or services so people in your area can connect with you',
-                icon: Icons.badge_outlined,
-                isSelected: provider.selectedRole == 'provider' || provider.selectedRole == 'both',
-                onTap: () => provider.setRole('both'),
-              ),
-
-              const Spacer(),
-
-              // Soft Privacy Reassurance Banner
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.trustGreenBg,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.shield_outlined, color: AppTheme.trustGreenText, size: 20),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Private & Safe: Your exact home address is never shown on a map. Contact info is shared only after mutual consent.',
-                        style: TextStyle(fontSize: 12, color: AppTheme.trustGreenText, height: 1.3),
-                      ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Center Pulsing Pin
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppTheme.primaryPurple.withOpacity(0.2),
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppTheme.primaryPurple.withOpacity(0.4),
+                    ),
+                  ),
+                  Container(
+                    width: 14,
+                    height: 14,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppTheme.primaryPurple,
+                    ),
+                  ),
+                  // Fake nearby pins
+                  Positioned(
+                    top: 60, left: 60,
+                    child: _buildMockPin(Colors.pinkAccent, '0.2 km'),
+                  ),
+                  Positioned(
+                    bottom: 70, right: 50,
+                    child: _buildMockPin(Colors.orangeAccent, '0.4 km'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
+            ),
+            
+            const SizedBox(height: 40),
 
-              // Continue Button
-              SizedBox(
+            // Text Content
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32.0),
+              child: Column(
+                children: [
+                  Text(
+                    "See who's around you",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textWhite,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    "Discover doctors, engineers, tutors, and more — living just streets away, invisible until now.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.textMuted,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Page Indicator
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 24, height: 6,
+                  decoration: BoxDecoration(color: AppTheme.primaryPurple, borderRadius: BorderRadius.circular(3)),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  width: 6, height: 6,
+                  decoration: const BoxDecoration(color: AppTheme.cardDarkElevated, shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  width: 6, height: 6,
+                  decoration: const BoxDecoration(color: AppTheme.cardDarkElevated, shape: BoxShape.circle),
+                ),
+              ],
+            ),
+
+            const Spacer(),
+
+            // Actions
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: SizedBox(
                 width: double.infinity,
-                height: 52,
+                height: 56,
                 child: ElevatedButton(
                   onPressed: () {
+                    // Set default role for demo purposes as seeker
+                    provider.setRole('seeker');
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (_) => const HomeScreen()),
                     );
                   },
-                  child: const Text('Continue'),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Continue', style: TextStyle(fontSize: 16)),
+                      SizedBox(width: 8),
+                      Icon(Icons.arrow_forward, size: 20, color: Colors.white),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'No spam · No data selling · Made for communities',
+              style: TextStyle(fontSize: 11, color: AppTheme.textDarkGrey),
+            ),
+            const SizedBox(height: 32),
+          ],
         ),
       ),
     );
   }
-}
 
-class _RoleCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _RoleCard({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppTheme.cardWhite,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? AppTheme.primaryIndigo : AppTheme.borderLight,
-            width: isSelected ? 2.0 : 1.0,
+  Widget _buildMockPin(Color color, String label) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4),
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppTheme.primaryIndigo.withOpacity(0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  )
-                ]
-              : [],
+          child: Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppTheme.primaryIndigo.withOpacity(0.12)
-                    : AppTheme.backgroundLight,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: isSelected ? AppTheme.primaryIndigo : AppTheme.textGray,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? AppTheme.primaryIndigo : AppTheme.textNearBlack,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 13, color: AppTheme.textGray),
-                  ),
-                ],
-              ),
-            ),
-            if (isSelected)
-              const Icon(
-                Icons.check_circle,
-                color: AppTheme.primaryIndigo,
-                size: 22,
-              ),
-          ],
-        ),
-      ),
+        const SizedBox(height: 4),
+        Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+      ],
     );
   }
 }

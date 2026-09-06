@@ -32,13 +32,13 @@ class MatchCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 26,
-                  backgroundColor: AppTheme.primaryIndigo.withOpacity(0.15),
+                  backgroundColor: AppTheme.cardDarkElevated,
                   child: Text(
                     candidate.name.isNotEmpty ? candidate.name[0] : 'U',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryIndigo,
+                      color: AppTheme.primaryPurple,
                     ),
                   ),
                 ),
@@ -55,7 +55,7 @@ class MatchCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.textNearBlack,
+                                color: AppTheme.textWhite,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -71,7 +71,7 @@ class MatchCard extends StatelessWidget {
                             : 'Skilled Professional',
                         style: const TextStyle(
                           fontSize: 13,
-                          color: AppTheme.textGray,
+                          color: AppTheme.textMuted,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -90,7 +90,7 @@ class MatchCard extends StatelessWidget {
                             '(${candidate.reviewCount} reviews) • ${candidate.localityName} (${match.approxDistanceKm.toStringAsFixed(1)} km)',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: AppTheme.textGray,
+                              color: AppTheme.textMuted,
                             ),
                           ),
                         ],
@@ -102,7 +102,7 @@ class MatchCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryIndigo,
+                    color: AppTheme.primaryPurple,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
@@ -128,13 +128,13 @@ class MatchCard extends StatelessWidget {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.backgroundLight,
+                      color: AppTheme.backgroundDarkGrid,
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: AppTheme.borderLight),
+                      border: Border.all(color: AppTheme.textDarkGrey),
                     ),
                     child: Text(
                       skill,
-                      style: const TextStyle(fontSize: 11, color: AppTheme.textNearBlack),
+                      style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
                     ),
                   );
                 }).toList(),
@@ -147,7 +147,7 @@ class MatchCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.backgroundLight,
+                color: AppTheme.backgroundDarkGrid,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
@@ -158,7 +158,7 @@ class MatchCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.textGray,
+                      color: AppTheme.textMuted,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -167,14 +167,14 @@ class MatchCard extends StatelessWidget {
                         child: Row(
                           children: [
                             const Icon(Icons.check_circle_outline,
-                                size: 12, color: AppTheme.primaryIndigo),
+                                size: 12, color: AppTheme.primaryPurple),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 tag,
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: AppTheme.textNearBlack,
+                                  color: AppTheme.textWhite,
                                 ),
                               ),
                             ),
@@ -193,7 +193,7 @@ class MatchCard extends StatelessWidget {
                 // Quick Feedback menu button
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.thumb_up_alt_outlined,
-                      size: 20, color: AppTheme.textGray),
+                      size: 20, color: AppTheme.textMuted),
                   tooltip: 'Feedback on result',
                   onSelected: onFeedback,
                   itemBuilder: (context) => [

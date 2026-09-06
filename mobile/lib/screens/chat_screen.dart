@@ -27,17 +27,20 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, dynamic>> _messages = [
     {
       'sender': 'them',
-      'text': 'Hi! Thanks for connecting. I am available for product photography shoots this week.',
+      'text':
+          'Hi! Thanks for connecting. I am available for product photography shoots this week.',
       'time': '10:32 AM',
     },
     {
       'sender': 'me',
-      'text': 'Great! We have 500 SKUs at our Koramangala studio. Can we discuss schedule and pricing?',
+      'text':
+          'Great! We have 500 SKUs at our Koramangala studio. Can we discuss schedule and pricing?',
       'time': '10:35 AM',
     },
     {
       'sender': 'them',
-      'text': 'Sure! I can come by tomorrow afternoon to inspect the studio setup.',
+      'text':
+          'Sure! I can come by tomorrow afternoon to inspect the studio setup.',
       'time': '10:36 AM',
     },
   ];
@@ -45,17 +48,21 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
         title: Column(
           children: [
-            Text(widget.partnerName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(widget.partnerProfession, style: const TextStyle(fontSize: 12, color: AppTheme.textGray)),
+            Text(widget.partnerName,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textWhite)),
+            Text(widget.partnerProfession,
+                style: const TextStyle(fontSize: 12, color: AppTheme.textMuted)),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.phone_outlined, color: AppTheme.primaryIndigo),
+            icon:
+                const Icon(Icons.phone_outlined, color: AppTheme.primaryPurple),
             tooltip: 'Call Partner',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +98,8 @@ class _ChatScreenState extends State<ChatScreen> {
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'rate', child: Text('Rate & Review')),
-              const PopupMenuItem(value: 'report', child: Text('Report / Block User')),
+              const PopupMenuItem(
+                  value: 'report', child: Text('Report / Block User')),
             ],
           ),
         ],
@@ -102,23 +110,23 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: AppTheme.cardWhite,
+            color: AppTheme.cardDark,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.backgroundLight,
+                color: AppTheme.backgroundDarkGrid,
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: AppTheme.borderLight),
+                border: Border.all(color: AppTheme.cardDarkElevated),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.lock_outline, size: 14, color: AppTheme.textGray),
+                  Icon(Icons.lock_outline, size: 14, color: AppTheme.textMuted),
                   SizedBox(width: 6),
                   Flexible(
                     child: Text(
                       'Connection accepted. You can now chat and coordinate details freely.',
-                      style: TextStyle(fontSize: 12, color: AppTheme.textGray),
+                      style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -136,28 +144,34 @@ class _ChatScreenState extends State<ChatScreen> {
                 final msg = _messages[index];
                 final isMe = msg['sender'] == 'me';
                 return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.75),
                     decoration: BoxDecoration(
-                      color: isMe ? AppTheme.primaryIndigo : AppTheme.cardWhite,
+                      color: isMe ? AppTheme.primaryPurple : AppTheme.cardDark,
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(16),
                         topRight: const Radius.circular(16),
                         bottomLeft: Radius.circular(isMe ? 16 : 4),
                         bottomRight: Radius.circular(isMe ? 4 : 16),
                       ),
-                      border: isMe ? null : Border.all(color: AppTheme.borderLight),
+                      border:
+                          isMe ? null : Border.all(color: AppTheme.cardDarkElevated),
                     ),
                     child: Column(
-                      crossAxisAlignment: isMe ? CrossAlignment.end : CrossAlignment.start,
+                      crossAxisAlignment: isMe
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
                       children: [
                         Text(
                           msg['text'],
                           style: TextStyle(
-                            color: isMe ? Colors.white : AppTheme.textNearBlack,
+                            color: isMe ? Colors.white : AppTheme.textWhite,
                             fontSize: 14,
                           ),
                         ),
@@ -165,7 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Text(
                           msg['time'],
                           style: TextStyle(
-                            color: isMe ? Colors.white70 : AppTheme.textGray,
+                            color: isMe ? Colors.white70 : AppTheme.textMuted,
                             fontSize: 10,
                           ),
                         ),
@@ -181,19 +195,22 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: const BoxDecoration(
-              color: AppTheme.cardWhite,
-              border: Border(top: BorderSide(color: AppTheme.borderLight)),
+              color: AppTheme.backgroundDark,
+              border: Border(top: BorderSide(color: AppTheme.cardDarkElevated)),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _msgController,
+                    style: const TextStyle(color: AppTheme.textWhite),
                     decoration: InputDecoration(
                       hintText: 'Type a message...',
-                      fillColor: AppTheme.backgroundLight,
+                      hintStyle: const TextStyle(color: AppTheme.textMuted),
+                      fillColor: AppTheme.cardDark,
                       filled: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(999),
                         borderSide: BorderSide.none,
@@ -204,7 +221,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 22,
-                  backgroundColor: AppTheme.primaryIndigo,
+                  backgroundColor: AppTheme.primaryPurple,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white, size: 18),
                     onPressed: () {
