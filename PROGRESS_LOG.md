@@ -179,5 +179,19 @@ NEXT STEP FOR WHOEVER PICKS THIS UP:
 - <concrete next action, not just "continue">
 ```
 
+### [2026-09-07] — Contributor: GitHub Copilot — Module(s): flutter-mobile-app, home-map
+STATUS: Completed
+WHAT WAS DONE:
+- Updated mobile/lib/screens/home_screen.dart to use GoogleMap only on web, Android, and iOS, with a visible locality/radius fallback on Windows where google_maps_flutter has no native implementation.
+- Added the existing Google Maps key to mobile/android/app/src/main/AndroidManifest.xml for Android map initialization.
+- Verified flutter build web succeeds.
+WHAT'S NOT DONE / KNOWN ISSUES:
+- The existing mobile/test/widget_test.dart still references the removed MyApp class, so full flutter analyze reports that unrelated test error.
+- Windows executable build remains unavailable on this machine because the Visual Studio toolchain is not installed.
+BLOCKED ON (if applicable):
+- A platform-restricted production Maps key should replace the currently shared key before release.
+NEXT STEP FOR WHOEVER PICKS THIS UP:
+- Install the Visual Studio desktop toolchain if Windows runtime validation is needed, and replace the shared Maps key with restricted platform keys.
+
 (No entries yet — first contributor adds the first one here.)
 
