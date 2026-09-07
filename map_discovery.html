@@ -1,0 +1,449 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nook — Discover Nearby Professionals</title>
+<meta name="description" content="Discover and connect with verified professionals and skilled individuals in your locality."/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --base:#060914;--base2:#0D1224;--card:#151C30;--card2:#1A2340;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --purple:#7C6FFF;--purple2:#5B4FE0;
+  --purple-glow:rgba(124,111,255,.3);--purple-soft:rgba(124,111,255,.1);
+  --text:#F0F2FF;--text-muted:#8B9DC3;--text-dim:#4A5880;
+  --green:#10B981;--green-bg:rgba(16,185,129,.1);
+  --amber:#F59E0B;--red:#EF4444;
+  --r:16px;--rsm:10px;--rp:999px;
+  --sh:0 4px 20px rgba(0,0,0,.5);--shlg:0 12px 40px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--card2);border-radius:var(--rp);}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--base);color:var(--text);overflow:hidden;}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:1000;height:58px;background:rgba(13,18,36,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.logo{display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:var(--text);text-decoration:none;}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--purple),var(--purple2));display:flex;align-items:center;justify-content:center;font-size:14px;}
+.search-wrap{flex:1;max-width:480px;position:relative;}
+.search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--rp);padding:9px 36px 9px 38px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:.2s;}
+.search-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-glow);}
+.search-input::placeholder{color:var(--text-dim);}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text-dim);pointer-events:none;}
+.sc{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;background:none;border:none;font-size:13px;cursor:pointer;color:var(--text-muted);}
+.filter-bar{position:fixed;top:58px;left:0;right:0;z-index:999;background:rgba(13,18,36,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px;overflow-x:auto;}
+.filter-bar::-webkit-scrollbar{height:0;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--rp);font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text-muted);cursor:pointer;transition:.18s;white-space:nowrap;user-select:none;}
+.chip:hover{border-color:var(--purple);color:var(--text);}
+.chip.active{background:var(--purple-soft);color:var(--purple);border-color:var(--purple);}
+.layout{position:fixed;top:102px;left:0;right:0;bottom:0;display:flex;}
+.sidebar{width:340px;flex-shrink:0;background:var(--base2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sb-head{padding:14px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sb-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
+.sb-sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.sb-list{flex:1;overflow-y:auto;padding:10px;}
+.pro-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:8px;cursor:pointer;transition:.18s;}
+.pro-card:hover{border-color:rgba(124,111,255,.35);background:var(--card2);}
+.pro-card.selected{border-color:var(--purple);background:var(--card2);box-shadow:0 0 0 1px var(--purple);}
+.pro-card-row{display:flex;align-items:flex-start;gap:10px;}
+.pro-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid var(--border);}
+.pro-info{flex:1;min-width:0;}
+.pro-name{font-weight:700;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pro-role{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pro-meta{display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.pro-dist{font-size:11px;color:var(--purple);font-weight:600;}
+.dim{font-size:11px;color:var(--text-dim);}
+.stars{font-size:11px;color:var(--amber);}
+.badge{padding:2px 8px;border-radius:var(--rp);font-size:10px;font-weight:700;}
+.vbg{background:var(--green-bg);color:var(--green);}
+.avail-pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--text-dim);}
+.avail-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.avail-available{background:var(--green);}
+.avail-limited{background:var(--amber);}
+.avail-unavailable{background:var(--text-dim);}
+.card-actions{display:flex;gap:6px;margin-top:10px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--rsm);cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:12px;padding:8px 14px;transition:.18s;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;box-shadow:0 4px 12px var(--purple-glow);}
+.btn-ghost{background:var(--card2);color:var(--text-muted);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--purple);color:var(--text);}
+.btn-lg{font-size:14px;padding:13px 20px;border-radius:var(--r);}
+.map-wrap{flex:1;position:relative;}
+#map{width:100%;height:100%;}
+.leaflet-container{background:#0a0f1e!important;font-family:'Inter',sans-serif;}
+.leaflet-tile{filter:brightness(.55) saturate(.45) hue-rotate(200deg);}
+.leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:var(--rsm)!important;overflow:hidden;}
+.leaflet-control-zoom a{background:var(--card2)!important;color:var(--text)!important;border-bottom:1px solid var(--border)!important;}
+.leaflet-control-attribution{display:none;}
+.leaflet-popup-content-wrapper{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:var(--r);box-shadow:var(--shlg);}
+.leaflet-popup-tip{background:var(--card2);}
+.leaflet-popup-close-button{color:var(--text-muted)!important;font-size:18px!important;top:8px!important;right:10px!important;}
+.nook-marker{display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;border:3px solid rgba(255,255,255,.25);cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 12px rgba(0,0,0,.4);}
+.nook-marker:hover,.nook-marker.sel{transform:scale(1.25);border-color:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.15),0 6px 24px rgba(0,0,0,.6);}
+.map-badge{position:absolute;top:10px;right:10px;z-index:900;background:rgba(13,18,36,.9);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--rsm);padding:8px 14px;font-size:12px;font-weight:700;color:var(--text);}
+.profile-panel{position:fixed;top:0;right:-620px;bottom:0;width:600px;background:var(--base2);border-left:1px solid var(--border);z-index:2000;display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1);box-shadow:-20px 0 60px rgba(0,0,0,.6);}
+.profile-panel.open{right:0;}
+.panel-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;background:var(--card2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-muted);z-index:10;transition:.15s;}
+.panel-close:hover{background:var(--card);color:var(--text);}
+.panel-body{flex:1;overflow-y:auto;padding-bottom:32px;}
+.profile-hero{padding:28px 28px 20px;background:linear-gradient(180deg,rgba(124,111,255,.12) 0%,transparent 100%);border-bottom:1px solid var(--border);}
+.profile-hero-row{display:flex;gap:18px;align-items:flex-start;}
+.profile-av{width:76px;height:76px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid rgba(255,255,255,.15);box-shadow:0 0 0 4px var(--base2),0 0 0 5px var(--purple);}
+.ph1{font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;color:var(--text);line-height:1.2;}
+.ptitle{font-size:13px;color:var(--text-muted);margin-top:3px;}
+.phl{font-size:12px;color:var(--text-dim);margin-top:6px;line-height:1.5;font-style:italic;}
+.pbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.spill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--rp);font-size:12px;font-weight:600;background:var(--card);border:1px solid var(--border);color:var(--text-muted);}
+.spill.pu{background:var(--purple-soft);border-color:var(--purple);color:var(--purple);}
+.spill.am{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);color:var(--amber);}
+.pctas{display:flex;gap:10px;margin-top:16px;}
+.section{padding:20px 28px;border-bottom:1px solid var(--border);}
+.sec-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.sec-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--purple);}
+.about-text{font-size:13px;color:var(--text-muted);line-height:1.7;}
+.tag-list{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{padding:6px 14px;border-radius:var(--rp);font-size:12px;font-weight:600;background:var(--card2);border:1px solid var(--border);color:var(--text-muted);}
+.svc-item{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);margin-bottom:7px;}
+.svc-icon{font-size:16px;width:28px;flex-shrink:0;text-align:center;}
+.svc-name{font-weight:600;font-size:13px;color:var(--text);}
+.svc-desc{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.exp-item{position:relative;padding-left:20px;margin-bottom:14px;}
+.exp-item::before{content:'';position:absolute;left:0;top:6px;width:10px;height:10px;border-radius:50%;background:var(--purple);border:2px solid var(--base2);}
+.exp-item::after{content:'';position:absolute;left:4px;top:16px;bottom:-14px;width:2px;background:var(--border);}
+.exp-item:last-child::after{display:none;}
+.exp-org{font-weight:700;font-size:13px;color:var(--text);}
+.exp-role{font-size:12px;color:var(--purple);}
+.exp-dur{font-size:11px;color:var(--text-dim);}
+.exp-desc{font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5;}
+.rev-item{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:12px;margin-bottom:8px;}
+.rev-text{font-size:12px;color:var(--text-muted);margin-top:5px;line-height:1.5;font-style:italic;}
+.priv-notice{display:flex;gap:9px;align-items:flex-start;background:var(--green-bg);border:1px solid rgba(16,185,129,.15);border-radius:var(--rsm);padding:10px 12px;margin:16px 28px 0;font-size:12px;color:#10B981;font-weight:600;line-height:1.4;}
+.overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;padding:20px;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px;width:100%;max-width:420px;transform:scale(.95);transition:transform .25s;box-shadow:var(--shlg);}
+.overlay.open .modal{transform:scale(1);}
+.modal-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--text-muted);margin-bottom:18px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;display:block;}
+textarea.modal-msg{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:none;outline:none;transition:.2s;min-height:100px;}
+textarea.modal-msg:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-glow);}
+.modal-priv{display:flex;gap:8px;margin:14px 0;background:var(--green-bg);border:1px solid rgba(16,185,129,.15);border-radius:var(--rsm);padding:10px 12px;font-size:12px;color:#10B981;font-weight:600;line-height:1.4;}
+.modal-btns{display:flex;gap:10px;margin-top:18px;}
+.req-sent{text-align:center;padding:20px 0;display:none;}
+.check-circle{width:60px;height:60px;border-radius:50%;background:var(--green-bg);border:2px solid #10B981;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:var(--rp);font-size:13px;font-weight:600;opacity:0;transition:.3s;z-index:9999;box-shadow:var(--sh);white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.empty{text-align:center;padding:40px 20px;color:var(--text-dim);}
+@media(max-width:768px){.sidebar{display:none;}.profile-panel{width:100%;right:-100%;}.profile-panel.open{right:0;}.map-badge{display:none;}}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="nook_demo.html" class="logo"><div class="logo-icon">N</div>Nook</a>
+  <div class="search-wrap">
+    <span class="si">&#128269;</span>
+    <input id="si" class="search-input" type="text" placeholder="Search profession, skill or name..."/>
+    <button class="sc" id="sc">&#10005;</button>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:10px;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple2));display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;" onclick="toast('Profile coming soon')">U</div>
+  </div>
+</nav>
+<div class="filter-bar" id="filter-bar">
+  <span style="font-size:11px;font-weight:700;color:var(--text-dim);white-space:nowrap;margin-right:4px;">FILTER:</span>
+  <span class="chip active" data-f="all">All</span>
+  <span class="chip" data-f="tech">Tech</span>
+  <span class="chip" data-f="creative">Creative</span>
+  <span class="chip" data-f="medical">Medical</span>
+  <span class="chip" data-f="finance">Finance</span>
+  <span class="chip" data-f="trade">Trade</span>
+  <span class="chip" data-f="education">Education</span>
+  <span class="chip" data-f="business">Business</span>
+  <div style="width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 4px;"></div>
+  <span class="chip" data-f="verified">Verified</span>
+  <span class="chip" data-f="available">Available</span>
+  <span class="chip" data-f="5km">Within 5km</span>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="sb-head">
+      <div class="sb-title" id="sb-title">Nearby Professionals</div>
+      <div class="sb-sub" id="sb-sub">15 found &middot; Rajouri Garden, Delhi</div>
+    </div>
+    <div class="sb-list" id="sb-list"></div>
+  </div>
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="map-badge"><span id="map-cnt">15</span> professionals nearby</div>
+  </div>
+</div>
+<div class="profile-panel" id="pp">
+  <button class="panel-close" onclick="closeProfile()">X</button>
+  <div class="panel-body" id="pb"></div>
+</div>
+<div class="overlay" id="co">
+  <div class="modal">
+    <div id="mf">
+      <div class="modal-title" id="mt">Connect</div>
+      <div class="modal-sub" id="ms">Send a connection request</div>
+      <label class="form-label">Your message (optional)</label>
+      <textarea class="modal-msg" id="mm" placeholder="Hi! I found your profile on Nook..."></textarea>
+      <div class="modal-priv">&#128274; Contact details shared only after mutual consent. Privacy guaranteed.</div>
+      <div class="modal-btns">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="sendReq()">Send Request</button>
+      </div>
+    </div>
+    <div class="req-sent" id="rs">
+      <div class="check-circle">&#10003;</div>
+      <div style="font-family:Poppins,sans-serif;font-weight:700;font-size:17px;color:var(--text);margin-bottom:8px;">Request Sent!</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5;">You will be notified when they accept. Contact stays private until then.</div>
+      <button class="btn btn-primary" onclick="closeModal()">Done</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const P=[
+{id:'p1',name:'Rahul Sharma',em:'R',profession:'AI & Generative AI Engineer',cat:'tech',headline:'Building intelligent systems with LLMs, RAG & multimodal AI',bio:'5+ years specialising in Large Language Models, Retrieval-Augmented Generation and AI product development. I help startups and enterprises integrate cutting-edge AI into their workflows. Open to mentorship, consulting and collaborative projects.',locality:'Rajouri Garden',dist:2.4,lat:28.6435,lng:77.1206,skills:['Generative AI','LLMs','Python','RAG','Machine Learning','NLP'],services:[{i:'AI',n:'AI Mentorship',d:'1-on-1 sessions on ML/AI career path'},{i:'GEN',n:'GenAI Consultation',d:'Architecture review & prompt engineering'},{i:'PRJ',n:'Project Guidance',d:'End-to-end AI project support'}],exp:[{o:'Microsoft',r:'Senior AI Engineer',d:'2022-Present',x:'Led RAG pipeline development for Azure AI Studio.'},{o:'Infosys',r:'ML Engineer',d:'2019-2022',x:'Built NLP models for document processing.'}],interests:['Open-source AI','Responsible AI','EdTech'],avail:'available',verified:true,tier:2,rating:4.8,revCount:26,reviews:[{a:'Priya K.',t:'Rahul explained RAG concepts so clearly. Highly recommend.'},{a:'Amit D.',t:'Excellent mentor. Helped me crack my first ML internship.'}],bg:'linear-gradient(135deg,#7C6FFF,#4F46E5)'},
+{id:'p2',name:'Ananya Gupta',em:'A',profession:'Commercial Product Photographer',cat:'creative',headline:'500+ SKU shoots, Studio lighting, E-commerce visuals',bio:'Product photographer with 7 years of experience in e-commerce and brand photography. Worked with 50+ brands across fashion, FMCG and D2C. Studio available in Janakpuri.',locality:'Janakpuri',dist:1.8,lat:28.628,lng:77.086,skills:['Product Photography','Studio Lighting','Lightroom','Photoshop','Brand Photography'],services:[{i:'CAM',n:'E-commerce Shoots',d:'High-volume SKU photography'},{i:'BRD',n:'Brand Campaigns',d:'Visual storytelling for brands'},{i:'EDI',n:'Photo Editing',d:'Retouching, colour correction'}],exp:[{o:'Amazon India',r:'Studio Photographer',d:'2021-Present',x:'500+ product sessions.'},{o:'Vogue India',r:'Photography Assistant',d:'2018-2021',x:'30+ editorial shoots.'}],interests:['Visual Branding','D2C','Photography Education'],avail:'available',verified:true,tier:2,rating:4.9,revCount:41,reviews:[{a:'Rohan M.',t:'Best product photographer in west Delhi. 300 SKUs in 2 days!'},{a:'Sneha T.',t:'Professional, creative and fast. Will hire again.'}],bg:'linear-gradient(135deg,#F97316,#EA580C)'},
+{id:'p3',name:'Dr. Priya Nair',em:'P',profession:'General Physician',cat:'medical',headline:'MBBS MD, General consultation, Preventive health',bio:'Practising physician with 12 years of clinical experience. MD from AIIMS Delhi. Available for general consultations, preventive health guidance and community health sessions.',locality:'Tilak Nagar',dist:0.9,lat:28.642,lng:77.098,skills:['General Medicine','Preventive Health','Paediatric Care','Chronic Disease','Patient Counselling'],services:[{i:'MED',n:'General Consultation',d:'Outpatient for adults and children'},{i:'CHK',n:'Preventive Check-up',d:'Annual health assessment'},{i:'PRE',n:'Prescription Review',d:'Second opinion on medications'}],exp:[{o:'AIIMS Delhi',r:'Senior Resident',d:'2016-2020',x:'Internal medicine, 500+ beds.'},{o:'Max Healthcare',r:'Consultant Physician',d:'2020-Present',x:'Outpatient general medicine.'}],interests:['Community Health','Preventive Medicine'],avail:'limited',verified:true,tier:3,rating:4.9,revCount:87,reviews:[{a:'Meera V.',t:'Dr. Priya is incredibly thorough and patient. Best GP locally.'},{a:'Kunal S.',t:'Very knowledgeable, explains everything clearly.'}],bg:'linear-gradient(135deg,#EF4444,#DC2626)'},
+{id:'p4',name:'Vikram Seth',em:'V',profession:'Chartered Accountant',cat:'finance',headline:'GST, Income Tax, Startup CFO advisory, ICAI Member',bio:'Practising CA with 8 years in GST compliance, income tax filing and startup advisory. Member of ICAI. Helped 60+ startups with financial and legal compliance.',locality:'Subhash Nagar',dist:3.1,lat:28.635,lng:77.105,skills:['GST Filing','Income Tax','Startup Finance','ICAI Certified','Audit and Assurance'],services:[{i:'GST',n:'GST Compliance',d:'Registration, filing, audit support'},{i:'ITX',n:'Income Tax Filing',d:'ITR for individuals and businesses'},{i:'CFO',n:'Startup CFO Advisory',d:'Financial modeling and fundraising'}],exp:[{o:'Deloitte',r:'Associate',d:'2015-2019',x:'Audit and assurance for BFSI.'},{o:'Self-Employed',r:'Practising CA',d:'2019-Present',x:'GST, tax and startup advisory.'}],interests:['Startup Ecosystem','FinTech','Tax Policy'],avail:'available',verified:true,tier:3,rating:4.7,revCount:32,reviews:[{a:'Akash F.',t:'Vikram saved our startup lakhs by properly structuring our GST setup.'}],bg:'linear-gradient(135deg,#3B82F6,#2563EB)'},
+{id:'p5',name:'Riya Malhotra',em:'R',profession:'UI/UX & Brand Designer',cat:'creative',headline:'Figma, Design systems, SaaS product design, Brand identity',bio:'Product designer with 5 years building digital products from 0 to 1. Specialise in SaaS interfaces, mobile apps and brand identity. Available for freelance contracts.',locality:'Punjabi Bagh',dist:2.9,lat:28.662,lng:77.128,skills:['Figma','UI Design','UX Research','Brand Identity','Design Systems'],services:[{i:'UI',n:'Product UI Design',d:'End-to-end web and mobile design'},{i:'BRD',n:'Brand Identity',d:'Logo, colour system and guidelines'},{i:'UX',n:'UX Audit',d:'Heuristic evaluation and improvements'}],exp:[{o:'Razorpay',r:'Senior Product Designer',d:'2021-2024',x:'Led merchant dashboard design.'},{o:'Freelance',r:'Brand Designer',d:'2019-2021',x:'50+ brand projects for startups.'}],interests:['Design Education','Open Source UI','Figma Community'],avail:'available',verified:true,tier:2,rating:4.8,revCount:19,reviews:[{a:'Dev S.',t:'Riya redesigned our onboarding and conversion went up 40%.'}],bg:'linear-gradient(135deg,#EC4899,#DB2777)'},
+{id:'p6',name:'Suresh Kumar',em:'S',profession:'Licensed Electrician',cat:'trade',headline:'Wiring, MCB panels, Solar installation, Emergency',bio:'Licensed electrician with 15 years in residential and commercial electrical work. MCB panels, solar rooftop wiring and appliance repair. Same-day emergency calls available.',locality:'Moti Nagar',dist:1.2,lat:28.652,lng:77.142,skills:['Electrical Wiring','MCB Panels','Solar Installation','Appliance Repair','Safety Inspection'],services:[{i:'ELE',n:'Home Wiring',d:'New wiring, rewiring and extension'},{i:'SOL',n:'Solar Rooftop',d:'Installation and grid connection'},{i:'EMR',n:'Emergency Repair',d:'Same-day fault finding'}],exp:[{o:'Delhi BSES',r:'Electrical Technician',d:'2008-2018',x:'Residential grid maintenance.'},{o:'Self',r:'Independent Electrician',d:'2018-Present',x:'400+ projects.'}],interests:['Renewable Energy','Skill Development'],avail:'available',verified:true,tier:2,rating:4.6,revCount:58,reviews:[{a:'Neha R.',t:'Suresh was at our door in 40 minutes for an emergency. Very professional!'}],bg:'linear-gradient(135deg,#F59E0B,#D97706)'},
+{id:'p7',name:'Pooja Agarwal',em:'P',profession:'Maths & Science Tutor',cat:'education',headline:'IIT-JEE, Class 6-12, Personalised learning, Home/online',bio:'M.Sc. Mathematics from Delhi University. 8 years tutoring with 94% IIT-JEE selection rate. Home tuitions and online sessions focused on conceptual clarity.',locality:'Vikaspuri',dist:4.0,lat:28.618,lng:77.075,skills:['Mathematics','Physics','Chemistry','IIT-JEE','CBSE Board','Statistics'],services:[{i:'JEE',n:'IIT-JEE Coaching',d:'Maths and Physics for JEE'},{i:'BRD',n:'CBSE Board Prep',d:'Class 6-12 all science subjects'},{i:'ONL',n:'Online Sessions',d:'1-on-1 and group tutoring'}],exp:[{o:'Aakash Institute',r:'Senior Faculty',d:'2019-2023',x:'IIT-JEE Mathematics faculty.'},{o:'Self-Employed',r:'Private Tutor',d:'2016-Present',x:'150+ students, 94% JEE rate.'}],interests:['Education Technology','STEM for Girls'],avail:'available',verified:true,tier:1,rating:4.9,revCount:63,reviews:[{a:'Arjun P.',t:'Pooja explained integration like no one else. Got 98 in boards!'}],bg:'linear-gradient(135deg,#06B6D4,#0891B2)'},
+{id:'p8',name:'Mohit Jain',em:'M',profession:'Plumber & Sanitation Expert',cat:'trade',headline:'Plumbing, Bathroom fitting, Water tank, Emergency',bio:'12 years in residential and commercial plumbing. PMKVY certified. Bathroom fitting, water tank installation, emergency leakage repair.',locality:'Uttam Nagar',dist:3.6,lat:28.612,lng:77.065,skills:['Plumbing','Pipe Fitting','Bathroom Installation','Water Tank','Emergency Leak Repair'],services:[{i:'PLM',n:'Bathroom Fitting',d:'Complete bathroom renovation'},{i:'LKR',n:'Leak Repair',d:'Emergency pipe and tap'},{i:'WTR',n:'Water Tank Install',d:'Overhead and underground'}],exp:[{o:'DDA',r:'Plumbing Contractor',d:'2012-2018',x:'Residential colony contracts.'},{o:'Self',r:'Independent Plumber',d:'2018-Present',x:'300+ satisfied households.'}],interests:['Skill Development','Clean Water Access'],avail:'available',verified:true,tier:2,rating:4.5,revCount:44,reviews:[{a:'Swati L.',t:'Fixed a major leak in under an hour. Fair pricing and reliable.'}],bg:'linear-gradient(135deg,#6B7280,#4B5563)'},
+{id:'p9',name:'Kiran Desai',em:'K',profession:'Private Chef & Catering',cat:'business',headline:'Home parties, Corporate events, South Indian, Continental',bio:'Trained chef from IHM with 10 years across 5-star hotels and private catering. South Indian, Continental and Indo-Chinese. Available for dinners, corporate lunches and festive events.',locality:'Kirti Nagar',dist:1.5,lat:28.656,lng:77.138,skills:['South Indian','Continental','Catering','Event Cooking','Menu Planning'],services:[{i:'CAT',n:'Home Party Catering',d:'Custom menus for 10-200 guests'},{i:'CRP',n:'Corporate Lunches',d:'Office catering and tiffin'},{i:'FST',n:'Festive Specials',d:'Diwali, weddings and occasions'}],exp:[{o:'Taj Hotel',r:'Chef de Partie',d:'2014-2019',x:'Continental and Indian cuisine.'},{o:'Self',r:'Owner - Kiran Kitchen',d:'2019-Present',x:'200+ private events.'}],interests:['Sustainable Cooking','Food Education'],avail:'limited',verified:true,tier:1,rating:4.7,revCount:22,reviews:[{a:'Ritika N.',t:'Kiran catered our anniversary dinner. Restaurant quality food!'}],bg:'linear-gradient(135deg,#10B981,#059669)'},
+{id:'p10',name:'Simran Kaur',em:'S',profession:'Event Planner & Decorator',cat:'business',headline:'Weddings, Corporate events, Birthday, Balloon decor',bio:'Certified event planner with 6 years managing weddings, corporate and private events. End-to-end management: concept, vendor coordination, setup and breakdown.',locality:'Hari Nagar',dist:2.2,lat:28.634,lng:77.114,skills:['Event Planning','Wedding Decoration','Vendor Management','Budget Planning','Floral Design'],services:[{i:'WED',n:'Wedding Management',d:'Full-service wedding coordination'},{i:'BDA',n:'Birthday Decor',d:'Theme-based decoration'},{i:'CRP',n:'Corporate Events',d:'Conferences and launches'}],exp:[{o:'WedMeGood',r:'Event Coordinator',d:'2018-2021',x:'100+ weddings across Delhi NCR.'},{o:'Simran Events',r:'Founder',d:'2021-Present',x:'Independent event studio.'}],interests:['Sustainable Events','Local Artisans'],avail:'available',verified:true,tier:2,rating:4.8,revCount:35,reviews:[{a:'Aditya M.',t:'Simran planned our launch party. Absolutely flawless!'}],bg:'linear-gradient(135deg,#A855F7,#9333EA)'},
+{id:'p11',name:'Deepak Chaudhary',em:'D',profession:'Digital Marketing Specialist',cat:'tech',headline:'Meta & Google Ads, SEO, D2C Growth, Performance',bio:'Performance marketer scaling D2C brands from 10L to 1Cr+ monthly. Certified Google and Meta Ads specialist. Available for retainers and campaign setup.',locality:'Paschim Vihar',dist:3.8,lat:28.668,lng:77.095,skills:['Meta Ads','Google Ads','SEO','Email Marketing','D2C Growth'],services:[{i:'ADS',n:'Paid Ads',d:'Meta, Google and LinkedIn campaigns'},{i:'SEO',n:'SEO Strategy',d:'Technical SEO and content'},{i:'EML',n:'Email Marketing',d:'Klaviyo/Mailchimp setup'}],exp:[{o:'Mamaearth',r:'Growth Marketer',d:'2020-2023',x:'Scaled ads from 50L to 5Cr/month.'},{o:'Freelance',r:'Marketing Consultant',d:'2023-Present',x:'15+ D2C clients.'}],interests:['D2C Ecosystem','Growth Hacking'],avail:'available',verified:true,tier:1,rating:4.6,revCount:17,reviews:[{a:'Sanya G.',t:'ROAS went from 1.2 to 3.8 in 3 months. Amazing results!'}],bg:'linear-gradient(135deg,#14B8A6,#0D9488)'},
+{id:'p12',name:'Ajay Verma',em:'A',profession:'Logistics & Supply Chain',cat:'business',headline:'Last-mile delivery, Warehouse setup, Freight optimization',bio:'10 years in logistics across e-commerce, FMCG and pharma. Help businesses set up last-mile delivery, WMS and freight contracts efficiently.',locality:'Madipur',dist:2.7,lat:28.658,lng:77.13,skills:['Supply Chain','Last-mile Delivery','Freight Management','Warehouse Design','ERP'],services:[{i:'LMD',n:'Last-mile Setup',d:'Delivery partner selection'},{i:'WRH',n:'Warehouse Design',d:'Layout, racking and WMS'},{i:'FRT',n:'Freight Optimization',d:'Rate negotiation and routing'}],exp:[{o:'Delhivery',r:'Operations Manager',d:'2015-2022',x:'Delhi NCR hub operations.'},{o:'Self',r:'Supply Chain Consultant',d:'2022-Present',x:'30+ startup clients.'}],interests:['Logistics Tech','EV Delivery'],avail:'available',verified:false,tier:1,rating:4.4,revCount:12,reviews:[{a:'Rahul B.',t:'Reduced our logistics cost by 22%. Very practical advice!'}],bg:'linear-gradient(135deg,#78716C,#57534E)'},
+{id:'p13',name:'Neha Bansal',em:'N',profession:'Freelance Graphic Designer',cat:'creative',headline:'Logo design, Social media, Print, Canva Pro expert',bio:'Graphic designer with 4 years creating visual identities and social content for startups. Quick turnaround with professional quality.',locality:'Tagore Garden',dist:1.6,lat:28.647,lng:77.1,skills:['Illustrator','Photoshop','Canva','Logo Design','Social Media'],services:[{i:'LGO',n:'Logo & Identity',d:'Logo, business card and brand kit'},{i:'SOC',n:'Social Media Creatives',d:'Posts and story templates'},{i:'PRT',n:'Print Design',d:'Brochures, flyers and banners'}],exp:[{o:'YDigital',r:'Junior Designer',d:'2020-2022',x:'Social media for 20+ brands.'},{o:'Freelance',r:'Graphic Designer',d:'2022-Present',x:'100+ projects.'}],interests:['Typography','Art and Illustration'],avail:'available',verified:true,tier:1,rating:4.5,revCount:28,reviews:[{a:'Aman J.',t:'Neha designed our restaurant menu - absolutely stunning!'}],bg:'linear-gradient(135deg,#F472B6,#EC4899)'},
+{id:'p14',name:'Rajeev Khanna',em:'R',profession:'Civil Engineer & Contractor',cat:'trade',headline:'Home renovation, Interior civil, Estimation and PM',bio:'Civil engineer with 14 years in residential construction. Transparent project estimates and full home renovation work. B.Tech Civil from NIT Kurukshetra.',locality:'Raghubir Nagar',dist:2.0,lat:28.649,lng:77.119,skills:['Civil Engineering','Interior Civil','Project Management','Estimation','Waterproofing'],services:[{i:'REN',n:'Home Renovation',d:'Full renovation with transparent costing'},{i:'WPF',n:'Waterproofing',d:'Terrace, bathroom and basement'},{i:'STR',n:'Structural Assessment',d:'Safety inspection for older buildings'}],exp:[{o:'L&T Construction',r:'Site Engineer',d:'2010-2018',x:'Residential high-rise projects.'},{o:'Self',r:'Independent Contractor',d:'2018-Present',x:'150+ renovation projects.'}],interests:['Sustainable Construction','Affordable Housing'],avail:'limited',verified:true,tier:2,rating:4.6,revCount:37,reviews:[{a:'Kavita S.',t:'Rajeev renovated our 2BHK in 6 weeks, on budget and on time!'}],bg:'linear-gradient(135deg,#92400E,#78350F)'},
+{id:'p15',name:'Isha Mehta',em:'I',profession:'Yoga & Wellness Coach',cat:'education',headline:'Hatha, Ashtanga, Prenatal yoga, Mindfulness',bio:'Certified yoga instructor (RYT-500) with 7 years teaching. Hatha, Ashtanga and prenatal yoga. Group classes, personal sessions and corporate wellness workshops.',locality:'Punjabi Bagh West',dist:3.3,lat:28.665,lng:77.137,skills:['Hatha Yoga','Ashtanga','Prenatal Yoga','Mindfulness','Meditation'],services:[{i:'YGA',n:'Personal Sessions',d:'1-on-1 customised yoga'},{i:'PRN',n:'Prenatal Yoga',d:'Safe yoga for every trimester'},{i:'CRP',n:'Corporate Wellness',d:'Weekly office wellness'}],exp:[{o:'Rishikesh Yoga Institute',r:'RYT-500 Graduate',d:'2017',x:'500-hour teacher training.'},{o:'Self',r:'Yoga Instructor',d:'2018-Present',x:'200+ regular students.'}],interests:['Holistic Health','Mindful Living','Community Yoga'],avail:'available',verified:true,tier:1,rating:4.9,revCount:54,reviews:[{a:'Tanvi P.',t:'Isha prenatal classes were exceptional throughout my pregnancy.'},{a:'Rohit A.',t:'Team stress genuinely dropped with her corporate yoga.'}],bg:'linear-gradient(135deg,#34D399,#10B981)'}
+];
+let aF=new Set(['all']),sQ='',selId=null,map,mL={},fD=[...P];
+
+function initMap(){
+  map=L.map('map',{center:[28.643,77.12],zoom:13});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+  const youIcon=L.divIcon({html:'<div style="width:16px;height:16px;border-radius:50%;background:#7C6FFF;box-shadow:0 0 0 5px rgba(124,111,255,.25),0 0 0 10px rgba(124,111,255,.1);border:3px solid white;"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});
+  L.marker([28.643,77.12],{icon:youIcon,zIndexOffset:1000}).addTo(map).bindTooltip('You are here',{direction:'top'});
+  renderMarkers();
+}
+
+function mkrHtml(p){
+  var initial=p.em||p.name.charAt(0);
+  return '<div class="nook-marker" id="mkr-'+p.id+'" style="width:40px;height:40px;background:'+p.bg+';color:#fff;font-weight:700;font-size:13px;">'+initial+'</div>';
+}
+
+function renderMarkers(){
+  Object.values(mL).forEach(function(m){m.remove();});
+  mL={};
+  fD.forEach(function(p){
+    var ic=L.divIcon({html:mkrHtml(p),iconSize:[40,40],iconAnchor:[20,20],className:''});
+    mL[p.id]=L.marker([p.lat,p.lng],{icon:ic}).addTo(map).on('click',function(){selectPro(p.id);});
+  });
+}
+
+function renderSidebar(){
+  var list=document.getElementById('sb-list');
+  document.getElementById('map-cnt').textContent=fD.length;
+  if(!fD.length){
+    list.innerHTML='<div class="empty"><div style="font-size:36px;margin-bottom:12px;">&#128269;</div><div style="font-weight:700;color:var(--text-muted);margin-bottom:6px;">No results found</div><div style="font-size:12px;">Try different filters or search terms</div></div>';
+    document.getElementById('sb-title').textContent='No results';
+    document.getElementById('sb-sub').textContent='Adjust search or filters';
+    return;
+  }
+  document.getElementById('sb-title').textContent='Nearby Professionals';
+  document.getElementById('sb-sub').textContent=fD.length+' found \u00b7 Rajouri Garden, Delhi';
+  var aL={available:'Available',limited:'Limited',unavailable:'Unavailable'};
+  list.innerHTML=fD.map(function(p){
+    var av=aL[p.avail]||'Unknown';
+    var dotC=p.avail==='available'?'avail-available':p.avail==='limited'?'avail-limited':'avail-unavailable';
+    return '<div class="pro-card'+(selId===p.id?' selected':'')+'" id="card-'+p.id+'" onclick="selectPro(\''+p.id+'\')">'+
+      '<div class="pro-card-row">'+
+        '<div class="pro-avatar" style="background:'+p.bg+';color:#fff;font-weight:800;font-size:18px;">'+p.em+'</div>'+
+        '<div class="pro-info">'+
+          '<div class="pro-name">'+p.name+'</div>'+
+          '<div class="pro-role">'+p.profession+'</div>'+
+          '<div class="pro-meta">'+
+            '<span class="pro-dist">'+p.dist+' km</span>'+
+            '<span class="dim">\u00b7 '+p.locality+'</span>'+
+            '<span class="stars">&#9733; '+p.rating+' ('+p.revCount+')</span>'+
+            (p.verified?'<span class="badge vbg">T'+p.tier+'</span>':'')+
+            '<span class="avail-pill"><span class="avail-dot '+dotC+'"></span>'+av+'</span>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card-actions">'+
+        '<button class="btn btn-ghost" onclick="event.stopPropagation();openProfile(\''+p.id+'\')">View Profile</button>'+
+        '<button class="btn btn-primary" onclick="event.stopPropagation();openConnect(\''+p.id+'\')">Connect</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function selectPro(id){
+  selId=id;
+  var p=P.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.querySelectorAll('.pro-card').forEach(function(c){c.classList.remove('selected');});
+  var card=document.getElementById('card-'+id);
+  if(card){card.classList.add('selected');card.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  Object.keys(mL).forEach(function(pid){
+    var el=document.getElementById('mkr-'+pid);
+    if(el){if(pid===id)el.classList.add('sel');else el.classList.remove('sel');}
+  });
+  map.flyTo([p.lat,p.lng],14,{animate:true,duration:0.8});
+  if(mL[id]){mL[id].unbindPopup();mL[id].bindPopup(buildPopup(p),{maxWidth:260,closeButton:true}).openPopup();}
+}
+
+function buildPopup(p){
+  var dotC=p.avail==='available'?'avail-available':p.avail==='limited'?'avail-limited':'avail-unavailable';
+  return '<div style="width:240px;padding:4px;">'+
+    '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">'+
+      '<div style="width:40px;height:40px;border-radius:50%;background:'+p.bg+';color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+p.em+'</div>'+
+      '<div>'+
+        '<div style="font-weight:700;font-size:13px;color:var(--text);">'+p.name+(p.verified?' <span class="badge vbg" style="font-size:9px;">T'+p.tier+'</span>':'')+'</div>'+
+        '<div style="font-size:11px;color:var(--text-muted);">'+p.profession+'</div>'+
+        '<div style="font-size:11px;color:var(--text-dim);margin-top:1px;">'+p.locality+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="font-size:11px;margin-bottom:8px;display:flex;gap:8px;align-items:center;">'+
+      '<span style="color:var(--purple);font-weight:700;">~'+p.dist+' km</span>'+
+      '<span style="color:#F59E0B;">&#9733; '+p.rating+'</span>'+
+      '<span style="color:var(--text-dim);">('+p.revCount+')</span>'+
+      '<span class="avail-dot '+dotC+'" style="width:8px;height:8px;border-radius:50%;"></span>'+
+    '</div>'+
+    '<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;font-style:italic;line-height:1.4;">'+p.headline+'</div>'+
+    '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">'+
+      p.skills.slice(0,3).map(function(s){return '<span style="background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 8px;font-size:10px;color:var(--text-muted);">'+s+'</span>';}).join('')+
+    '</div>'+
+    '<div style="display:flex;gap:7px;">'+
+      '<button class="btn btn-ghost" style="flex:1;font-size:11px;padding:7px 10px;" onclick="openProfile(\''+p.id+'\')">View Profile</button>'+
+      '<button class="btn btn-primary" style="flex:1;font-size:11px;padding:7px 10px;" onclick="openConnect(\''+p.id+'\')">Connect</button>'+
+    '</div>'+
+    '<div style="font-size:10px;color:var(--text-dim);margin-top:8px;text-align:center;">&#128274; Approximate location only. Exact address hidden.</div>'+
+  '</div>';
+}
+
+function openProfile(id){
+  var p=P.find(function(x){return x.id===id;});
+  if(!p)return;
+  var avLabel={available:'Available',limited:'Limited availability',unavailable:'Not available'}[p.avail]||p.avail;
+  var dotC=p.avail==='available'?'avail-available':p.avail==='limited'?'avail-limited':'avail-unavailable';
+  var html='<div class="profile-hero">'+
+    '<div class="profile-hero-row">'+
+      '<div class="profile-av" style="background:'+p.bg+';color:#fff;font-weight:800;font-size:32px;">'+p.em+'</div>'+
+      '<div style="flex:1;">'+
+        '<div class="ph1">'+p.name+'</div>'+
+        '<div class="ptitle">'+p.profession+'</div>'+
+        '<div class="phl">'+p.headline+'</div>'+
+        '<div class="pbadges">'+
+          (p.verified?'<span class="badge vbg" style="padding:3px 10px;font-size:11px;">Tier '+p.tier+' Verified</span>':'<span class="badge" style="background:rgba(255,255,255,.05);color:var(--text-dim);padding:3px 10px;font-size:11px;">Unverified</span>')+
+          '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:rgba(255,255,255,.05);color:var(--text-dim);"><span class="avail-dot '+dotC+'"></span>'+avLabel+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;">'+
+      '<span class="spill pu">'+p.locality+'</span>'+
+      '<span class="spill">~'+p.dist+' km away</span>'+
+      '<span class="spill am">&#9733; '+p.rating+' &middot; '+p.revCount+' reviews</span>'+
+    '</div>'+
+    '<div class="pctas">'+
+      '<button class="btn btn-primary btn-lg" style="flex:1;" onclick="openConnect(\''+p.id+'\')">Connect</button>'+
+      '<button class="btn btn-ghost btn-lg" style="flex:1;" onclick="toast(\'Chat with '+p.name.split(' ')[0]+' - coming soon\')">Message</button>'+
+    '</div>'+
+  '</div>'+
+  '<div class="priv-notice">&#128274; Approximate locality shown. Exact address never shared publicly. Contact revealed only after mutual consent.</div>'+
+  '<div class="section"><div class="sec-title">About</div><div class="about-text">'+p.bio+'</div></div>'+
+  '<div class="section"><div class="sec-title">Skills</div><div class="tag-list">'+p.skills.map(function(s){return '<span class="tag">'+s+'</span>';}).join('')+'</div></div>'+
+  '<div class="section"><div class="sec-title">Services</div>'+p.services.map(function(s){return '<div class="svc-item"><div class="svc-icon" style="background:var(--card2);border-radius:8px;padding:4px;font-size:11px;font-weight:700;color:var(--purple);">'+s.i+'</div><div><div class="svc-name">'+s.n+'</div><div class="svc-desc">'+s.d+'</div></div></div>';}).join('')+'</div>'+
+  '<div class="section"><div class="sec-title">Experience</div>'+p.exp.map(function(e){return '<div class="exp-item"><div class="exp-org">'+e.o+'</div><div class="exp-role">'+e.r+'</div><div class="exp-dur">'+e.d+'</div><div class="exp-desc">'+e.x+'</div></div>';}).join('')+'</div>'+
+  '<div class="section"><div class="sec-title">Interests</div><div class="tag-list">'+p.interests.map(function(i){return '<span class="tag">'+i+'</span>';}).join('')+'</div></div>'+
+  '<div class="section"><div class="sec-title">Reviews & Reputation</div>'+
+    '<div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;padding:14px;background:var(--card2);border-radius:var(--rsm);">'+
+      '<div style="text-align:center;"><div style="font-family:Poppins,sans-serif;font-size:30px;font-weight:800;color:#F59E0B;">'+p.rating+'</div><div style="font-size:11px;color:var(--text-dim);">out of 5.0</div></div>'+
+      '<div style="font-size:12px;color:var(--text-dim);">'+p.revCount+' total reviews</div>'+
+    '</div>'+
+    p.reviews.map(function(r){return '<div class="rev-item"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="width:24px;height:24px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-muted);">'+r.a.charAt(0)+'</div><div style="font-weight:700;font-size:12px;color:var(--text);">'+r.a+'</div><div style="margin-left:auto;font-size:11px;color:#F59E0B;">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div><div class="rev-text">"'+r.t+'"</div></div>';}).join('')+
+  '</div>';
+  document.getElementById('pb').innerHTML=html;
+  document.getElementById('pp').classList.add('open');
+}
+
+function closeProfile(){document.getElementById('pp').classList.remove('open');}
+
+function openConnect(id){
+  var p=P.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('mt').textContent='Connect with '+p.name.split(' ')[0];
+  document.getElementById('ms').textContent=p.profession+' \u00b7 '+p.locality;
+  document.getElementById('mm').value='Hi '+p.name.split(' ')[0]+', I found your profile on Nook and would love to connect. ';
+  document.getElementById('mf').style.display='block';
+  document.getElementById('rs').style.display='none';
+  document.getElementById('co').classList.add('open');
+}
+function closeModal(){document.getElementById('co').classList.remove('open');}
+function sendReq(){
+  document.getElementById('mf').style.display='none';
+  document.getElementById('rs').style.display='block';
+  toast('Connection request sent successfully!');
+}
+
+function applyFilters(){
+  var q=sQ.toLowerCase();
+  var cats=['tech','creative','medical','finance','trade','education','business'].filter(function(c){return aF.has(c);});
+  var verif=aF.has('verified'),avail=aF.has('available'),w5=aF.has('5km');
+  fD=P.filter(function(p){
+    if(q&&!p.name.toLowerCase().includes(q)&&!p.profession.toLowerCase().includes(q)&&!p.skills.some(function(s){return s.toLowerCase().includes(q)})&&!p.locality.toLowerCase().includes(q))return false;
+    if(cats.length&&!cats.includes(p.cat))return false;
+    if(verif&&!p.verified)return false;
+    if(avail&&p.avail!=='available')return false;
+    if(w5&&p.dist>5)return false;
+    return true;
+  });
+  renderSidebar();
+  renderMarkers();
+}
+
+document.getElementById('filter-bar').addEventListener('click',function(e){
+  var chip=e.target.closest('[data-f]');
+  if(!chip)return;
+  var f=chip.dataset.f;
+  if(f==='all'){
+    aF=new Set(['all']);
+    document.querySelectorAll('[data-f]').forEach(function(c){c.classList.remove('active');});
+    chip.classList.add('active');
+  }else{
+    aF.delete('all');
+    document.querySelector('[data-f="all"]').classList.remove('active');
+    chip.classList.toggle('active');
+    if(chip.classList.contains('active'))aF.add(f);else aF.delete(f);
+    if(!aF.size){aF.add('all');document.querySelector('[data-f="all"]').classList.add('active');}
+  }
+  applyFilters();
+});
+
+var siEl=document.getElementById('si'),scEl=document.getElementById('sc');
+siEl.addEventListener('input',function(e){sQ=e.target.value;scEl.style.display=sQ?'block':'none';applyFilters();});
+scEl.addEventListener('click',function(){siEl.value='';sQ='';scEl.style.display='none';applyFilters();});
+document.getElementById('co').addEventListener('click',function(e){if(e.target===document.getElementById('co'))closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeProfile();closeModal();}});
+
+function toast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(function(){el.classList.remove('show');},2800);
+}
+
+window.addEventListener('load',function(){initMap();renderSidebar();});
+</script>
+</body>
+</html>
