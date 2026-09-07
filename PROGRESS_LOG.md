@@ -163,6 +163,19 @@ BLOCKED ON (if applicable):
 NEXT STEP FOR WHOEVER PICKS THIS UP:
 - Implement the Needs module (POST /api/needs, GET /api/needs/:id/matches) using 2dsphere geospatial search, radius filtering (1/5/10 km), and hybrid ranking.
 
+### [2026-09-07] — Contributor: GitHub Copilot — Module(s): flutter-mobile-app, home-nearby-scroll
+STATUS: Completed
+WHAT WAS DONE:
+- Updated `mobile/lib/screens/home_screen.dart` so the nearby-results area inside the draggable bottom sheet uses a vertical `ListView` attached to the sheet scroll controller.
+- Map/header and Scaffold bottom navigation remain fixed while the nearby cards can be scrolled.
+- Removed the unused Google Maps import from the touched screen.
+WHAT'S NOT DONE / KNOWN ISSUES:
+- Existing analyzer info messages remain for deprecated `withOpacity`, super-parameter suggestion, and one const suggestion.
+BLOCKED ON (if applicable):
+- None.
+NEXT STEP FOR WHOEVER PICKS THIS UP:
+- Verify the scroll gesture visually on the target mobile viewport during the live demo.
+
 ### Template for new entries
 ```
 ### [YYYY-MM-DD HH:MM] — Contributor: <name> — Module(s): <e.g. auth, profiles>
