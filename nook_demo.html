@@ -1,832 +1,1168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Nook — Hyperlocal Connection Platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  /* ──────────────────────────────────────────
-     DESIGN TOKENS (matches docs/design.md)
-  ────────────────────────────────────────── */
-  :root{
-    --indigo:#4F5DFF;
-    --indigo-light:#eef0ff;
-    --indigo-dark:#3a47e0;
-    --bg:#FAFAF8;
-    --card:#FFFFFF;
-    --trust-green-bg:#E8F7EE;
-    --trust-green:#1E9E5A;
-    --text-dark:#111111;
-    --text-gray:#6B7280;
-    --border:#E5E7EB;
-    --star:#FFB800;
-    --radius-card:18px;
-    --radius-pill:999px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  body{
-    font-family:'Inter',sans-serif;
-    background:#d1d5db;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    padding:24px 0;
-  }
+/* ════════════════════════════════════════
+   DESIGN TOKENS — AroundMe Figma System
+   ════════════════════════════════════════ */
+:root{
+  --base:#090D16;
+  --base2:#0F172A;
+  --card:#1E293B;
+  --card2:#111827;
+  --border:rgba(255,255,255,.07);
+  --purple:#8B5CF6;
+  --purple2:#7C3AED;
+  --purple-glow:rgba(139,92,246,.25);
+  --purple-soft:rgba(139,92,246,.12);
+  --text:#FFFFFF;
+  --text-muted:#94A3B8;
+  --text-dim:#64748B;
+  --green:#10B981;
+  --green-bg:rgba(16,185,129,.12);
+  --amber:#F59E0B;
+  --red:#EF4444;
+  --radius:20px;
+  --radius-sm:12px;
+  --radius-pill:999px;
+}
 
-  /* ── Mobile Frame ── */
-  .phone-frame{
-    width:390px;
-    height:844px;
-    border-radius:44px;
-    background:var(--bg);
-    box-shadow:0 30px 80px rgba(0,0,0,.35),inset 0 0 0 2px #888;
-    overflow:hidden;
-    position:relative;
-    display:flex;
-    flex-direction:column;
-  }
-  /* Status Bar */
-  .status-bar{
-    background:var(--card);
-    padding:14px 20px 8px;
-    display:flex;justify-content:space-between;align-items:center;
-    font-size:12px;font-weight:600;color:var(--text-dark);
-    flex-shrink:0;
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
-  /* SCREENS */
-  .screen{
-    flex:1;
-    overflow-y:auto;
-    display:none;
-    flex-direction:column;
-    background:var(--bg);
-  }
-  .screen.active{display:flex;}
-  .screen-body{padding:20px;flex:1;overflow-y:auto;}
+body{
+  font-family:'Inter',sans-serif;
+  background:radial-gradient(ellipse at 30% 20%,rgba(139,92,246,.18) 0%,transparent 60%),
+             radial-gradient(ellipse at 70% 80%,rgba(124,58,237,.12) 0%,transparent 60%),
+             #060914;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:24px 12px;
+}
 
-  /* App Bar */
-  .app-bar{
-    background:var(--card);
-    padding:12px 20px;
-    display:flex;align-items:center;gap:12px;
-    border-bottom:1px solid var(--border);
-    flex-shrink:0;
-  }
-  .app-bar h2{font-size:17px;font-weight:700;color:var(--text-dark);flex:1;text-align:center;}
-  .back-btn{width:32px;height:32px;border:none;background:transparent;cursor:pointer;
-    font-size:18px;color:var(--text-dark);display:flex;align-items:center;justify-content:center;border-radius:50%;}
-  .back-btn:hover{background:var(--bg);}
+/* ── PHONE SHELL ── */
+.phone{
+  width:390px;
+  height:844px;
+  background:var(--base2);
+  border-radius:50px;
+  box-shadow:
+    0 0 0 10px #0a0e1a,
+    0 0 0 12px #1a1f35,
+    0 40px 100px rgba(0,0,0,.8),
+    0 0 60px rgba(139,92,246,.15);
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+}
 
-  /* Bottom Tab Bar */
-  .bottom-bar{
-    background:var(--card);
-    border-top:1px solid var(--border);
-    display:flex;
-    flex-shrink:0;
-    padding-bottom:16px;
-  }
-  .tab-btn{
-    flex:1;border:none;background:transparent;cursor:pointer;
-    padding:10px 0 4px;display:flex;flex-direction:column;align-items:center;gap:3px;
-    font-size:10px;font-weight:600;color:var(--text-gray);transition:.15s;
-  }
-  .tab-btn.active{color:var(--indigo);}
-  .tab-icon{font-size:22px;line-height:1;}
+/* Status Bar */
+.status{
+  background:var(--base2);
+  padding:16px 24px 8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:'Poppins',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  flex-shrink:0;
+  position:relative;
+  z-index:10;
+}
+.status-icons{display:flex;align-items:center;gap:5px;font-size:12px;}
 
-  /* ── COMPONENTS ── */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    border:none;border-radius:var(--radius-pill);cursor:pointer;
-    font-family:'Inter',sans-serif;font-weight:700;font-size:15px;
-    padding:13px 24px;transition:.15s;
-  }
-  .btn-primary{background:var(--indigo);color:#fff;}
-  .btn-primary:hover{background:var(--indigo-dark);}
-  .btn-outline{background:var(--card);color:var(--text-dark);border:1.5px solid var(--border);}
-  .btn-block{display:flex;width:100%;}
-  .btn-sm{font-size:13px;padding:8px 16px;}
+/* Dynamic Island notch */
+.notch{
+  width:120px;height:30px;
+  background:#000;
+  border-radius:var(--radius-pill);
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  z-index:20;
+}
 
-  .card{
-    background:var(--card);border-radius:var(--radius-card);
-    border:1px solid var(--border);padding:16px;margin-bottom:14px;
-  }
+/* SCREENS */
+.screen{
+  flex:1;overflow:hidden;display:none;flex-direction:column;
+  background:var(--base2);
+}
+.screen.active{display:flex;}
+.body{flex:1;overflow-y:auto;padding:20px;}
+.body::-webkit-scrollbar{width:0;}
 
-  .chip{
-    display:inline-flex;align-items:center;gap:5px;
-    padding:6px 14px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;
-    border:1px solid var(--border);background:var(--card);color:var(--text-dark);
-    cursor:pointer;transition:.15s;
-  }
-  .chip.active{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+/* App Bar */
+.appbar{
+  background:rgba(9,13,22,.9);
+  backdrop-filter:blur(12px);
+  padding:14px 20px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;position:relative;z-index:5;
+}
+.appbar h2{
+  font-family:'Poppins',sans-serif;
+  font-size:17px;font-weight:700;
+  color:var(--text);flex:1;text-align:center;
+}
+.back{
+  width:34px;height:34px;border:none;
+  background:var(--card);border-radius:10px;
+  cursor:pointer;font-size:16px;color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+.back:hover{background:var(--purple-soft);}
 
-  .trust-banner{
-    background:var(--trust-green-bg);border-radius:12px;
-    border:1px solid rgba(30,158,90,.2);
-    padding:12px 14px;display:flex;gap:10px;align-items:flex-start;
-    margin-bottom:16px;
-  }
-  .trust-banner span{font-size:12px;font-weight:600;color:var(--trust-green);line-height:1.4;}
+/* Bottom Nav */
+.nav{
+  background:rgba(14,19,36,.95);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;flex-shrink:0;
+  padding-bottom:14px;
+}
+.nav-btn{
+  flex:1;border:none;background:transparent;cursor:pointer;
+  padding:10px 0 2px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-family:'Inter',sans-serif;
+  font-size:10px;font-weight:600;color:var(--text-dim);
+  transition:.2s;position:relative;
+}
+.nav-btn.active{color:var(--purple);}
+.nav-btn.active::after{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:28px;height:3px;background:var(--purple);border-radius:var(--radius-pill);
+}
+.nav-icon{font-size:20px;line-height:1;}
 
-  .badge{
-    display:inline-flex;align-items:center;gap:4px;
-    padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;
-  }
-  .badge-t1{background:var(--indigo-light);color:var(--indigo);}
-  .badge-t2{background:var(--indigo-light);color:var(--indigo);}
-  .badge-t3{background:var(--trust-green-bg);color:var(--trust-green);}
+/* ── COMPONENTS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:var(--radius);cursor:pointer;
+  font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;
+  padding:15px 24px;transition:.2s;
+  position:relative;overflow:hidden;
+}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:.2s;}
+.btn:hover::after{background:rgba(255,255,255,.06);}
+.btn:active{transform:scale(.97);}
+.btn-primary{
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  color:#fff;
+  box-shadow:0 8px 24px rgba(139,92,246,.4);
+}
+.btn-ghost{
+  background:var(--card);color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-block{display:flex;width:100%;}
+.btn-sm{font-size:12px;padding:9px 16px;border-radius:12px;}
 
-  .score-pill{
-    background:var(--indigo);color:#fff;border-radius:var(--radius-pill);
-    padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap;
-  }
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  padding:16px;
+  margin-bottom:12px;
+  transition:.2s;
+}
+.card:hover{border-color:rgba(139,92,246,.2);}
 
-  .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-  .tag{
-    background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-pill);
-    padding:4px 10px;font-size:11px;color:var(--text-dark);
-  }
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--radius-pill);
+  font-size:12px;font-weight:600;font-family:'Inter',sans-serif;
+  border:1px solid var(--border);
+  background:var(--card2);color:var(--text-muted);
+  cursor:pointer;transition:.2s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--purple);color:var(--text);}
+.chip.active{background:var(--purple-soft);color:var(--purple);border-color:var(--purple);}
 
-  .why-box{
-    background:var(--bg);border-radius:10px;padding:10px;margin:10px 0;
-  }
-  .why-box p{font-size:11px;font-weight:700;color:var(--text-gray);margin-bottom:6px;}
-  .why-item{display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;font-size:12px;color:var(--text-dark);}
-  .why-item::before{content:"✓";color:var(--indigo);font-weight:700;flex-shrink:0;margin-top:1px;}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:var(--radius-pill);
+  font-size:11px;font-weight:700;font-family:'Inter',sans-serif;
+}
+.badge-green{background:var(--green-bg);color:var(--green);}
+.badge-purple{background:var(--purple-soft);color:var(--purple);}
 
-  input,textarea{
-    width:100%;border:1px solid var(--border);border-radius:12px;
-    padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-dark);
-    background:var(--bg);outline:none;resize:none;
-  }
-  input:focus,textarea:focus{border-color:var(--indigo);}
+/* Avatar */
+.avatar{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),#3B82F6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  box-shadow:0 0 0 2px var(--base2),0 0 0 3px var(--purple);
+}
+.avatar-lg{width:72px;height:72px;font-size:32px;}
 
-  .slider{width:100%;accent-color:var(--indigo);}
-  .label-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;
-    color:var(--text-dark);margin-bottom:6px;}
+/* Input */
+input,textarea{
+  width:100%;background:var(--card2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:13px 16px;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:14px;
+  outline:none;resize:none;transition:.2s;
+}
+input:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-glow);}
+input::placeholder,textarea::placeholder{color:var(--text-dim);}
 
-  /* Stars */
-  .stars{display:flex;gap:4px;font-size:22px;cursor:pointer;}
-  .star-r{color:#e5e7eb;}.star-r.on{color:var(--star);}
+/* Range slider */
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:5px;
+  border-radius:var(--radius-pill);border:none;padding:0;
+  background:linear-gradient(to right,var(--purple) 25%,var(--card) 25%);
+  box-shadow:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--purple);box-shadow:0 0 10px var(--purple-glow);cursor:pointer;
+}
 
-  /* Chat */
-  .msg-wrap{display:flex;flex-direction:column;gap:12px;padding:16px;}
-  .bubble{
-    max-width:80%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.4;
-    position:relative;
-  }
-  .bubble-them{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;align-self:flex-start;}
-  .bubble-me{background:var(--indigo);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;}
-  .bubble-time{font-size:10px;color:var(--text-gray);margin-top:4px;}
-  .bubble-me .bubble-time{color:rgba(255,255,255,.7);}
+/* Map mock */
+.map-mock{
+  width:100%;height:100%;position:relative;
+  background:radial-gradient(circle at 45% 50%,#1a2744 0%,#0d1628 100%);
+  overflow:hidden;
+}
+.map-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.map-road-h{position:absolute;background:rgba(255,255,255,.06);height:2px;}
+.map-road-v{position:absolute;background:rgba(255,255,255,.06);width:2px;}
+.map-pin{
+  position:absolute;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;transition:.2s;
+}
+.map-pin:hover{transform:translate(-50%,-50%) scale(1.1);}
+.pin-dot{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;box-shadow:0 4px 16px rgba(0,0,0,.4);
+  border:2px solid rgba(255,255,255,.2);
+}
+.pin-label{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-pill);padding:3px 8px;
+  font-size:10px;font-weight:700;color:var(--text);
+  margin-top:3px;white-space:nowrap;
+}
+.me-pin{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--purple);
+  box-shadow:0 0 0 6px rgba(139,92,246,.25),0 0 0 12px rgba(139,92,246,.1);
+  position:absolute;top:50%;left:45%;transform:translate(-50%,-50%);
+}
 
-  /* Admin metric row */
-  .metric-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);}
-  .metric-row:last-child{border-bottom:none;}
-  .metric-label{font-size:13px;color:var(--text-gray);}
-  .metric-val{font-size:14px;font-weight:700;color:var(--indigo);}
+/* Chat bubble */
+.bubble{
+  max-width:78%;padding:12px 15px;border-radius:18px;
+  font-size:13px;line-height:1.5;font-family:'Inter',sans-serif;
+}
+.bubble-them{
+  background:var(--card);border:1px solid var(--border);
+  border-bottom-left-radius:4px;align-self:flex-start;color:var(--text);
+}
+.bubble-me{
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  border-bottom-right-radius:4px;align-self:flex-end;color:#fff;
+}
+.btime{font-size:10px;color:var(--text-dim);margin-top:4px;}
 
-  /* Notify snackbar */
-  #snack{
-    position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(60px);
-    background:#111;color:#fff;padding:10px 20px;border-radius:var(--radius-pill);
-    font-size:13px;font-weight:600;opacity:0;transition:.3s;z-index:999;white-space:nowrap;
-  }
-  #snack.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* Star rating */
+.stars{display:flex;gap:3px;}
+.star{font-size:14px;color:#334155;}
+.star.on{color:var(--amber);}
 
-  /* Scrollbar hidden */
-  ::-webkit-scrollbar{width:0;height:0;}
+/* Notification badge */
+.notif-badge{
+  position:absolute;top:-2px;right:-2px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--red);font-size:9px;font-weight:700;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--base2);
+}
 
-  /* Pulse animation for match score */
-  @keyframes pop{0%{transform:scale(.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
-  .pop{animation:pop .25s ease forwards;}
+/* Gradient hero text */
+.grad-text{
+  background:linear-gradient(135deg,#fff 0%,rgba(139,92,246,.9) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
 
-  /* Radius badge next to slider */
-  .radius-val{
-    background:var(--indigo);color:#fff;border-radius:var(--radius-pill);
-    padding:3px 10px;font-size:12px;font-weight:700;
-  }
+/* Section label */
+.sec-label{
+  font-family:'Poppins',sans-serif;
+  font-size:12px;font-weight:600;
+  color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;
+  margin:20px 0 10px;
+}
+
+/* Dot indicator */
+.dots{display:flex;gap:6px;justify-content:center;margin:10px 0;}
+.dot{width:8px;height:8px;border-radius:var(--radius-pill);background:var(--card);transition:.3s;}
+.dot.active{background:var(--purple);width:22px;}
+
+/* Toggle */
+.toggle{
+  width:44px;height:26px;border-radius:var(--radius-pill);
+  background:var(--purple);cursor:pointer;position:relative;
+  transition:.3s;border:none;flex-shrink:0;
+}
+.toggle::after{
+  content:'';position:absolute;width:20px;height:20px;border-radius:50%;
+  background:#fff;top:3px;left:21px;transition:.3s;
+  box-shadow:0 2px 4px rgba(0,0,0,.3);
+}
+
+/* Snack */
+#snack{
+  position:fixed;bottom:100px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text);padding:11px 20px;
+  border-radius:var(--radius-pill);font-size:13px;font-weight:600;
+  font-family:'Inter',sans-serif;
+  opacity:0;transition:.3s;z-index:999;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+#snack.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Score bar */
+.score-bar{
+  height:4px;border-radius:var(--radius-pill);
+  background:var(--card2);overflow:hidden;margin-top:6px;
+}
+.score-fill{height:100%;border-radius:var(--radius-pill);
+  background:linear-gradient(90deg,var(--purple),#3B82F6);}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:12px 0;}
+
+/* ── ONBOARDING DOTS pagination ── */
+@keyframes glow{0%,100%{box-shadow:0 0 12px var(--purple-glow);}50%{box-shadow:0 0 24px rgba(139,92,246,.5);}}
+.glow-btn{animation:glow 2.5s infinite;}
+
+/* Glass card */
+.glass{
+  background:rgba(30,41,59,.6);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+}
 </style>
 </head>
 <body>
-
 <div id="snack"></div>
 
-<!-- ═══════════════════════════════════════ PHONE FRAME ═══════════════════════════════════════ -->
-<div class="phone-frame">
+<!-- ═══════════════════ PHONE ═══════════════════ -->
+<div class="phone">
+  <!-- Notch -->
+  <div class="notch"></div>
+
   <!-- Status Bar -->
-  <div class="status-bar">
-    <span id="time-display">9:41</span>
-    <span>📶 🔋</span>
+  <div class="status">
+    <span id="clock">9:41</span>
+    <div class="status-icons">
+      <span>▲▲▲</span>
+      <span>📶</span>
+      <span>🔋</span>
+    </div>
   </div>
 
-  <!-- ════════════ SCREEN 1: ROLE SELECTION ════════════ -->
-  <div class="screen active" id="s-role">
-    <div class="screen-body" style="display:flex;flex-direction:column;">
-      <div style="margin-bottom:24px;margin-top:12px;">
-        <div style="width:54px;height:54px;border-radius:16px;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;">🏘️</div>
-        <h1 style="font-size:28px;font-weight:800;color:var(--text-dark);line-height:1.2;margin-bottom:8px;">Welcome to<br/>Nook</h1>
-        <p style="font-size:14px;color:var(--text-gray);line-height:1.5;">Connect with trusted professionals and skilled people living or working right in your locality.</p>
-      </div>
-
-      <p style="font-size:14px;font-weight:700;color:var(--text-dark);margin-bottom:14px;">How would you like to start?</p>
-
-      <div class="card" id="role-seek" onclick="selectRole('seeker')" style="cursor:pointer;border:2px solid var(--indigo);transition:.15s;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:44px;height:44px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🔍</div>
-          <div style="flex:1;">
-            <p style="font-weight:700;font-size:15px;color:var(--indigo);">Find someone</p>
-            <p style="font-size:12px;color:var(--text-gray);margin-top:2px;">Discover verified professionals & skilled people nearby</p>
+  <!-- ══════════ SCREEN: ONBOARDING ══════════ -->
+  <div class="screen active" id="s-onboard" style="background:var(--base2);">
+    <div class="body" style="padding:0;display:flex;flex-direction:column;position:relative;overflow:hidden;">
+      <!-- Map Hero -->
+      <div style="flex:1;position:relative;min-height:320px;max-height:340px;">
+        <div class="map-mock">
+          <div class="map-grid"></div>
+          <!-- Roads -->
+          <div class="map-road-h" style="top:35%;left:0;right:0;"></div>
+          <div class="map-road-h" style="top:65%;left:0;right:0;"></div>
+          <div class="map-road-v" style="left:30%;top:0;bottom:0;"></div>
+          <div class="map-road-v" style="left:65%;top:0;bottom:0;"></div>
+          <!-- User location -->
+          <div class="me-pin"></div>
+          <!-- Map pins -->
+          <div class="map-pin" style="top:35%;left:22%;" onclick="toast('🩺 Dr. Priya — 0.2 km')">
+            <div class="pin-dot" style="background:linear-gradient(135deg,#EF4444,#DC2626);">🩺</div>
+            <div class="pin-label">0.2 km</div>
           </div>
-          <span style="color:var(--indigo);font-size:18px;">✓</span>
+          <div class="map-pin" style="top:28%;left:60%;" onclick="toast('💻 Rahul — Dev — 0.4 km')">
+            <div class="pin-dot" style="background:linear-gradient(135deg,var(--purple),var(--purple2));">💻</div>
+            <div class="pin-label">0.4 km</div>
+          </div>
+          <div class="map-pin" style="top:55%;left:75%;" onclick="toast('🎨 Ananya — Photographer — 0.8 km')">
+            <div class="pin-dot" style="background:linear-gradient(135deg,#F97316,#EA580C);">🎨</div>
+            <div class="pin-label">0.8 km</div>
+          </div>
+          <div class="map-pin" style="top:70%;left:50%;" onclick="toast('🧘 Meera — Tutor — 1.1 km')">
+            <div class="pin-dot" style="background:linear-gradient(135deg,var(--green),#059669);">🧘</div>
+            <div class="pin-label">1.1 km</div>
+          </div>
+          <!-- Dashed connection line SVG -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 390 340">
+            <line x1="175" y1="170" x2="86" y2="119" stroke="rgba(139,92,246,.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="175" y1="170" x2="234" y2="95" stroke="rgba(139,92,246,.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="175" y1="170" x2="292" y2="187" stroke="rgba(139,92,246,.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="175" y1="170" x2="195" y2="238" stroke="rgba(139,92,246,.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+          </svg>
+          <!-- Gradient fade bottom -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,var(--base2));"></div>
         </div>
       </div>
 
-      <div class="card" id="role-prov" onclick="selectRole('provider')" style="cursor:pointer;border:1.5px solid var(--border);transition:.15s;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:44px;height:44px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🪪</div>
-          <div style="flex:1;">
-            <p style="font-weight:700;font-size:15px;color:var(--text-dark);">Offer a skill / Be discoverable</p>
-            <p style="font-size:12px;color:var(--text-gray);margin-top:2px;">List your skills so people in your area can connect with you</p>
-          </div>
-          <span id="prov-check" style="color:transparent;font-size:18px;">✓</span>
+      <!-- Skip -->
+      <button onclick="goTo('s-signup')" style="position:absolute;top:16px;right:16px;background:rgba(30,41,59,.8);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:var(--radius-pill);padding:6px 16px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;">Skip</button>
+
+      <!-- Content -->
+      <div style="padding:24px 24px 28px;background:var(--base2);">
+        <h1 style="font-family:'Poppins',sans-serif;font-size:30px;font-weight:800;line-height:1.2;margin-bottom:12px;" class="grad-text">See who's<br/>around you</h1>
+        <p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">Discover doctors, engineers, tutors, and<br/>more — living just streets away, invisible<br/>until now.</p>
+        <div class="dots" style="justify-content:flex-start;margin-bottom:20px;">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
         </div>
+        <button class="btn btn-primary btn-block glow-btn" onclick="goTo('s-signup')">Continue →</button>
+        <p style="text-align:center;font-size:11px;color:var(--text-dim);margin-top:12px;">No spam · No data selling · Made for communities</p>
       </div>
-
-      <div class="trust-banner" style="margin-top:12px;">
-        <span>🛡️</span>
-        <span>Your exact home address is <strong>never</strong> shown. Contact info is shared only after mutual consent.</span>
-      </div>
-
-      <button class="btn btn-primary btn-block" style="margin-top:auto;" onclick="goTo('s-home')">Continue →</button>
     </div>
-  </div><!-- /s-role -->
+  </div><!-- /onboarding -->
 
-  <!-- ════════════ SCREEN 2: HOME ════════════ -->
+  <!-- ══════════ SCREEN: SIGN UP ══════════ -->
+  <div class="screen" id="s-signup">
+    <div class="body" style="display:flex;flex-direction:column;justify-content:center;">
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--purple),var(--purple2));display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;box-shadow:0 8px 24px var(--purple-glow);">📍</div>
+        <h1 style="font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px;" class="grad-text">Join Nook</h1>
+        <p style="font-size:13px;color:var(--text-muted);">Your hyperlocal community network</p>
+      </div>
+      <div style="margin-bottom:14px;">
+        <p style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;">Mobile Number</p>
+        <div style="display:flex;gap:8px;">
+          <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;font-size:14px;color:var(--text);white-space:nowrap;">🇮🇳 +91</div>
+          <input type="tel" placeholder="98765 43210" value="98765 43210"/>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <p style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;">Your Role</p>
+        <div style="display:flex;gap:8px;">
+          <div id="role-seek" onclick="setRole('seeker')" class="chip active" style="flex:1;justify-content:center;">🔍 Find Help</div>
+          <div id="role-prov" onclick="setRole('provider')" class="chip" style="flex:1;justify-content:center;">🪪 Offer Skill</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="sendOTP()">Send OTP →</button>
+      <div style="margin-top:20px;">
+        <p style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;text-align:center;">Enter OTP</p>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <input id="otp1" type="text" maxlength="1" style="width:50px;text-align:center;font-size:22px;font-weight:700;" oninput="otpNext(this,'otp2')"/>
+          <input id="otp2" type="text" maxlength="1" style="width:50px;text-align:center;font-size:22px;font-weight:700;" oninput="otpNext(this,'otp3')"/>
+          <input id="otp3" type="text" maxlength="1" style="width:50px;text-align:center;font-size:22px;font-weight:700;" oninput="otpNext(this,'otp4')"/>
+          <input id="otp4" type="text" maxlength="1" style="width:50px;text-align:center;font-size:22px;font-weight:700;" oninput="otpDone(this)"/>
+        </div>
+      </div>
+      <div style="margin-top:24px;padding:12px;background:var(--green-bg);border-radius:var(--radius-sm);border:1px solid rgba(16,185,129,.2);display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:16px;">🛡️</span>
+        <span style="font-size:12px;color:var(--green);line-height:1.4;font-weight:600;">Your exact address is never public. Contact shared only after mutual consent.</span>
+      </div>
+    </div>
+  </div><!-- /signup -->
+
+  <!-- ══════════ SCREEN: PROFILE SETUP ══════════ -->
+  <div class="screen" id="s-profile-setup">
+    <div class="appbar">
+      <button class="back" onclick="goTo('s-signup')">‹</button>
+      <h2>Complete Profile</h2>
+      <div style="width:34px;"></div>
+    </div>
+    <div class="body">
+      <div style="text-align:center;margin-bottom:20px;position:relative;">
+        <div class="avatar avatar-lg" style="margin:0 auto 10px;">👨</div>
+        <button onclick="toast('📷 Photo upload coming soon')" style="position:absolute;bottom:8px;left:50%;transform:translateX(12px);background:var(--purple);border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:12px;color:#fff;">+</button>
+      </div>
+      <div style="margin-bottom:12px;">
+        <p class="sec-label" style="margin-top:0;">Full Name</p>
+        <input type="text" placeholder="e.g. Ananya Verma" value="Ananya Verma"/>
+      </div>
+      <div style="margin-bottom:12px;">
+        <p class="sec-label">Profession / Skill</p>
+        <input type="text" placeholder="e.g. Product Photographer" value="Commercial Product Photographer"/>
+      </div>
+      <div style="margin-bottom:12px;">
+        <p class="sec-label">Locality</p>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="text" placeholder="Auto-detected..." value="Indiranagar, Bengaluru" style="flex:1;"/>
+          <button onclick="toast('📍 Location updated')" class="btn btn-ghost btn-sm" style="border-radius:10px;white-space:nowrap;">Detect</button>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <p class="sec-label">Tags / Skills</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span class="chip active">📸 Photography</span>
+          <span class="chip active">🎨 Photoshop</span>
+          <span class="chip active">💡 Lighting</span>
+          <span class="chip" onclick="this.classList.toggle('active')">📦 Ecommerce</span>
+          <span class="chip" onclick="this.classList.toggle('active')">🎬 Video</span>
+          <span class="chip" onclick="this.classList.toggle('active')">+ Add</span>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <p class="sec-label">Availability</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="chip active" onclick="toggleChip(this)">✅ Available Now</span>
+          <span class="chip" onclick="toggleChip(this)">📅 This Week</span>
+          <span class="chip" onclick="toggleChip(this)">🕓 On Request</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="goTo('s-home')">Save & Continue →</button>
+    </div>
+  </div><!-- /profile-setup -->
+
+  <!-- ══════════ SCREEN: MAP HOME ══════════ -->
   <div class="screen" id="s-home">
-    <div class="app-bar" style="justify-content:space-between;">
-      <div class="chip" style="font-size:13px;gap:5px;padding:7px 14px;">📍 Koramangala, BLR</div>
-      <button class="btn btn-sm btn-outline" onclick="goTo('s-admin')" style="font-size:11px;padding:6px 12px;">🛠 Admin</button>
-    </div>
-    <div class="screen-body">
-      <!-- AI Search Bar -->
-      <div onclick="goTo('s-composer')" style="background:var(--card);border:1.5px solid rgba(79,93,255,.3);border-radius:20px;padding:15px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:24px;box-shadow:0 4px 12px rgba(79,93,255,.08);">
-        <span style="font-size:20px;">✨</span>
-        <span style="color:var(--text-gray);font-size:14px;flex:1;">Describe what you need in plain text...</span>
-        <span style="color:var(--text-gray);font-size:14px;">›</span>
+    <div style="flex:1;position:relative;overflow:hidden;">
+      <!-- Full-screen map -->
+      <div class="map-mock" style="position:absolute;inset:0;">
+        <div class="map-grid"></div>
+        <div class="map-road-h" style="top:30%;left:0;right:0;opacity:.5;"></div>
+        <div class="map-road-h" style="top:55%;left:0;right:0;opacity:.5;"></div>
+        <div class="map-road-h" style="top:75%;left:0;right:0;opacity:.3;"></div>
+        <div class="map-road-v" style="left:25%;top:0;bottom:0;opacity:.5;"></div>
+        <div class="map-road-v" style="left:55%;top:0;bottom:0;opacity:.5;"></div>
+        <div class="map-road-v" style="left:80%;top:0;bottom:0;opacity:.3;"></div>
+        <div class="me-pin" style="top:52%;left:48%;"></div>
+        <div class="map-pin" style="top:30%;left:20%;" onclick="showProfile('Priya Nair','Doctor','0.2 km','4.9','42','Jayanagar')">
+          <div class="pin-dot" style="background:linear-gradient(135deg,#EF4444,#DC2626);">🩺</div>
+          <div class="pin-label">0.2 km</div>
+        </div>
+        <div class="map-pin" style="top:22%;left:58%;" onclick="showProfile('Rahul Dev','Engineer','0.4 km','4.7','18','Indiranagar')">
+          <div class="pin-dot" style="background:linear-gradient(135deg,var(--purple),var(--purple2));">💻</div>
+          <div class="pin-label">0.4 km</div>
+        </div>
+        <div class="map-pin" style="top:40%;left:75%;" onclick="showProfile('Ananya Verma','Photographer','0.8 km','4.9','34','Koramangala')">
+          <div class="pin-dot" style="background:linear-gradient(135deg,#F97316,#EA580C);">📸</div>
+          <div class="pin-label">0.8 km</div>
+        </div>
+        <div class="map-pin" style="top:65%;left:65%;" onclick="showProfile('Meera Singh','Yoga Tutor','1.0 km','4.8','27','HSR Layout')">
+          <div class="pin-dot" style="background:linear-gradient(135deg,var(--green),#059669);">🧘</div>
+          <div class="pin-label">1.0 km</div>
+        </div>
+        <div class="map-pin" style="top:72%;left:30%;" onclick="showProfile('Vikram Seth','Event Decorator','1.3 km','4.6','12','BTM Layout')">
+          <div class="pin-dot" style="background:linear-gradient(135deg,#A855F7,#9333EA);">🎉</div>
+          <div class="pin-label">1.3 km</div>
+        </div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;">
+          <circle cx="48%" cy="52%" r="90" fill="none" stroke="rgba(139,92,246,.15)" stroke-width="1.5" stroke-dasharray="6,4"/>
+          <circle cx="48%" cy="52%" r="160" fill="none" stroke="rgba(139,92,246,.08)" stroke-width="1" stroke-dasharray="4,6"/>
+        </svg>
       </div>
 
-      <p style="font-weight:700;font-size:16px;color:var(--text-dark);margin-bottom:12px;">Browse By Need</p>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
-        <span class="chip" onclick="quickSearch('Product Photography')">📸 Photography</span>
-        <span class="chip" onclick="quickSearch('Electrician')">⚡ Electrician</span>
-        <span class="chip" onclick="quickSearch('Plumber')">🔧 Plumber</span>
-        <span class="chip" onclick="quickSearch('Tutor')">📚 Tutor</span>
-        <span class="chip" onclick="quickSearch('Event Decorator')">🎉 Decorator</span>
-        <span class="chip" onclick="quickSearch('Mechanic')">🚗 Mechanic</span>
-      </div>
-
-      <p style="font-weight:700;font-size:16px;color:var(--text-dark);margin-bottom:6px;">Your Locality Zone</p>
-      <p style="font-size:12px;color:var(--text-gray);margin-bottom:12px;">Approximate neighborhood zone only — exact pin never shown.</p>
-      <div style="height:160px;background:#EFEFEA;border-radius:20px;border:1px solid var(--border);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-        <!-- Fake map circles -->
-        <div style="width:140px;height:140px;border-radius:50%;background:rgba(79,93,255,.08);border:1.5px solid rgba(79,93,255,.3);position:absolute;"></div>
-        <div style="width:80px;height:80px;border-radius:50%;background:rgba(79,93,255,.13);border:1.5px solid rgba(79,93,255,.5);position:absolute;"></div>
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:16px;z-index:1;box-shadow:0 0 0 6px rgba(79,93,255,.2);">📍</div>
-        <div style="position:absolute;bottom:10px;left:10px;background:#fff;border-radius:var(--radius-pill);padding:5px 12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;">
-          <span style="color:var(--trust-green);">🛡️</span> Zone Radius: 5 km (No exact address shown)
+      <!-- Top Search Bar (floating) -->
+      <div style="position:absolute;top:12px;left:14px;right:14px;z-index:5;">
+        <div onclick="goTo('s-nearby')" class="glass" style="display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;">
+          <span style="font-size:16px;">🔍</span>
+          <span style="font-size:13px;color:var(--text-muted);flex:1;">Search nearby professionals...</span>
+          <div style="background:var(--purple-soft);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--purple);">Filter</div>
         </div>
       </div>
-    </div>
-    <div class="bottom-bar">
-      <button class="tab-btn active" onclick="goTo('s-home')"><span class="tab-icon">🏠</span>Home</button>
-      <button class="tab-btn" onclick="goTo('s-composer')"><span class="tab-icon">🔍</span>Search</button>
-      <button class="tab-btn" onclick="goTo('s-connections')"><span class="tab-icon">💬</span>Messages</button>
-      <button class="tab-btn" onclick="goTo('s-verify')"><span class="tab-icon">👤</span>Profile</button>
-    </div>
-  </div><!-- /s-home -->
 
-  <!-- ════════════ SCREEN 3: NEED COMPOSER ════════════ -->
-  <div class="screen" id="s-composer">
-    <div class="app-bar">
-      <button class="back-btn" onclick="goTo('s-home')">‹</button>
-      <h2>Describe Your Need</h2>
-      <div style="width:32px;"></div>
-    </div>
-    <div class="screen-body">
-      <div class="card" style="border:1.5px solid rgba(79,93,255,.2);">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-          <span style="font-size:18px;">✨</span>
-          <span style="font-size:12px;font-weight:700;color:var(--indigo);">Natural Language Input</span>
+      <!-- Category chips (floating) -->
+      <div style="position:absolute;top:74px;left:0;right:0;z-index:5;overflow-x:auto;padding:0 14px;display:flex;gap:8px;" class="no-scroll">
+        <span class="chip active" onclick="toast('🩺 Filtering: Doctors')">🩺 Doctor</span>
+        <span class="chip" onclick="toast('💻 Filtering: Engineers')">💻 Engineer</span>
+        <span class="chip" onclick="toast('🔧 Filtering: Mechanics')">🔧 Mechanic</span>
+        <span class="chip" onclick="toast('📊 Filtering: Finance')">📊 Finance</span>
+        <span class="chip" onclick="toast('📸 Filtering: Photography')">📸 Photo</span>
+        <span class="chip" onclick="toast('🧘 Filtering: Tutors')">🧘 Tutor</span>
+      </div>
+
+      <!-- Bottom sheet mini -->
+      <div class="glass" style="position:absolute;bottom:0;left:0;right:0;padding:12px 16px;z-index:5;">
+        <div style="width:36px;height:4px;background:var(--border);border-radius:var(--radius-pill);margin:0 auto 10px;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--text);">5 people nearby</p>
+          <span onclick="goTo('s-nearby')" style="font-size:12px;color:var(--purple);font-weight:600;cursor:pointer;">View all →</span>
         </div>
-        <textarea id="need-text" rows="4" placeholder="e.g. 'I need a product photographer for 500 SKUs this week' or 'Need an electrician for a fuse repair today'">I need product photography for 500 SKUs this week</textarea>
-      </div>
-
-      <p style="font-weight:700;font-size:13px;margin-bottom:8px;margin-top:4px;">Urgency / Timeline</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-        <span class="chip" id="urg-imm" onclick="setUrgency('immediate',this)">🚨 Urgent / Today</span>
-        <span class="chip active" id="urg-week" onclick="setUrgency('this_week',this)">📅 This Week</span>
-        <span class="chip" id="urg-flex" onclick="setUrgency('flexible',this)">🕓 Flexible</span>
-      </div>
-
-      <div class="label-row">
-        <span>Search Radius</span>
-        <span class="radius-val" id="radius-label">5 km</span>
-      </div>
-      <input type="range" class="slider" min="1" max="20" value="5" id="radius-slider"
-        oninput="document.getElementById('radius-label').textContent=this.value+' km'" />
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-gray);margin-top:4px;margin-bottom:20px;">
-        <span>1 km</span><span>10 km</span><span>20 km</span>
-      </div>
-
-      <button class="btn btn-primary btn-block" onclick="submitNeed()">✨ Find Nearby Candidates</button>
-    </div>
-    <div class="bottom-bar">
-      <button class="tab-btn" onclick="goTo('s-home')"><span class="tab-icon">🏠</span>Home</button>
-      <button class="tab-btn active" onclick="goTo('s-composer')"><span class="tab-icon">🔍</span>Search</button>
-      <button class="tab-btn" onclick="goTo('s-connections')"><span class="tab-icon">💬</span>Messages</button>
-      <button class="tab-btn" onclick="goTo('s-verify')"><span class="tab-icon">👤</span>Profile</button>
-    </div>
-  </div><!-- /s-composer -->
-
-  <!-- ════════════ SCREEN 4: RESULTS ════════════ -->
-  <div class="screen" id="s-results">
-    <div class="app-bar">
-      <button class="back-btn" onclick="goTo('s-composer')">‹</button>
-      <h2 id="results-title">Product Photography</h2>
-      <div style="width:32px;"></div>
-    </div>
-    <div class="screen-body">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <p style="font-weight:700;font-size:15px;color:var(--text-dark);">3 Verified Candidates</p>
-        <span style="font-size:12px;color:var(--text-gray);">Radius: 5 km ▾</span>
-      </div>
-
-      <!-- Card 1 -->
-      <div class="card">
-        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">👩</div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <span style="font-weight:700;font-size:15px;">Ananya Verma</span>
-              <span class="badge badge-t2">✓ Tier 2</span>
+        <!-- Mini cards row -->
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;">
+          <div onclick="showProfile('Priya Nair','Doctor','0.2 km','4.9','42','Jayanagar')" class="card" style="min-width:130px;padding:12px;margin:0;cursor:pointer;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <div class="avatar" style="width:32px;height:32px;font-size:14px;box-shadow:none;">🩺</div>
+              <div>
+                <p style="font-weight:700;font-size:11px;color:var(--text);">Priya Nair</p>
+                <p style="font-size:10px;color:var(--text-muted);">📍 0.2 km</p>
+              </div>
             </div>
-            <p style="font-size:12px;color:var(--text-gray);">Commercial Product Photographer</p>
-            <p style="font-size:12px;margin-top:2px;">⭐ <strong>4.9</strong> · (34 reviews) · Indiranagar, BLR (1.8 km)</p>
+            <span class="badge badge-green" style="font-size:9px;padding:2px 7px;">✓ Verified</span>
           </div>
-          <span class="score-pill pop">95% Match</span>
-        </div>
-        <div class="tag-list">
-          <span class="tag">Product Photography</span><span class="tag">Studio Shoot</span><span class="tag">Photoshop</span>
-        </div>
-        <div class="why-box">
-          <p>Why this match?</p>
-          <div class="why-item">Exact Category Match (product photography)</div>
-          <div class="why-item">Nearby — 1.8 km away</div>
-          <div class="why-item">Tier 2 Verified Provider Badge</div>
-          <div class="why-item">Top Rated (4.9 ★)</div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-sm btn-outline" onclick="feedback('Useful')">👍</button>
-            <button class="btn btn-sm btn-outline" onclick="feedback('Too Far')">📍</button>
-            <button class="btn btn-sm btn-outline" onclick="feedback('Not Relevant')">👎</button>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="goTo('s-request')">Connect →</button>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="card">
-        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">👨</div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <span style="font-weight:700;font-size:15px;">Rohan Sharma</span>
-              <span class="badge badge-t1">✓ Tier 1</span>
+          <div onclick="showProfile('Rahul Dev','Engineer','0.4 km','4.7','18','Indiranagar')" class="card" style="min-width:130px;padding:12px;margin:0;cursor:pointer;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <div class="avatar" style="width:32px;height:32px;font-size:14px;box-shadow:none;">💻</div>
+              <div>
+                <p style="font-weight:700;font-size:11px;color:var(--text);">Rahul Dev</p>
+                <p style="font-size:10px;color:var(--text-muted);">📍 0.4 km</p>
+              </div>
             </div>
-            <p style="font-size:12px;color:var(--text-gray);">Studio & Event Photographer</p>
-            <p style="font-size:12px;margin-top:2px;">⭐ <strong>4.7</strong> · (18 reviews) · Koramangala, BLR (0.8 km)</p>
+            <span class="badge badge-purple" style="font-size:9px;padding:2px 7px;">Tier 2</span>
           </div>
-          <span class="score-pill">88% Match</span>
-        </div>
-        <div class="tag-list">
-          <span class="tag">Lighting</span><span class="tag">Product Photos</span><span class="tag">Edits</span>
-        </div>
-        <div class="why-box">
-          <p>Why this match?</p>
-          <div class="why-item">Matching Skills: product, photos</div>
-          <div class="why-item">Very Close — 0.8 km away</div>
-          <div class="why-item">Tier 1 Verified Phone User</div>
-          <div class="why-item">Top Rated (4.7 ★)</div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-sm btn-outline" onclick="feedback('Useful')">👍</button>
-            <button class="btn btn-sm btn-outline" onclick="feedback('Too Far')">📍</button>
+          <div onclick="showProfile('Ananya Verma','Photographer','0.8 km','4.9','34','Koramangala')" class="card" style="min-width:130px;padding:12px;margin:0;cursor:pointer;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <div class="avatar" style="width:32px;height:32px;font-size:14px;box-shadow:none;background:linear-gradient(135deg,#F97316,#EA580C);">📸</div>
+              <div>
+                <p style="font-weight:700;font-size:11px;color:var(--text);">Ananya Verma</p>
+                <p style="font-size:10px;color:var(--text-muted);">📍 0.8 km</p>
+              </div>
+            </div>
+            <span class="badge badge-green" style="font-size:9px;padding:2px 7px;">✓ Verified</span>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="goTo('s-request')">Connect →</button>
         </div>
       </div>
     </div>
-  </div><!-- /s-results -->
+    <div class="nav">
+      <button class="nav-btn active"><span class="nav-icon">🗺️</span>Map</button>
+      <button class="nav-btn" onclick="goTo('s-nearby')"><span class="nav-icon">👥</span>Nearby</button>
+      <button class="nav-btn" onclick="goTo('s-messages')" style="position:relative;"><span class="nav-icon">💬</span>Messages<span class="notif-badge">2</span></button>
+      <button class="nav-btn" onclick="goTo('s-profile')"><span class="nav-icon">👤</span>Profile</button>
+    </div>
+  </div><!-- /map-home -->
 
-  <!-- ════════════ SCREEN 5: CONNECTION REQUEST ════════════ -->
+  <!-- ══════════ SCREEN: NEARBY LIST ══════════ -->
+  <div class="screen" id="s-nearby">
+    <div class="appbar">
+      <button class="back" onclick="goTo('s-home')">‹</button>
+      <h2>Nearby</h2>
+      <button class="back" onclick="toast('⚙️ Filters')">⚙️</button>
+    </div>
+
+    <!-- Sort & Filter bar -->
+    <div style="padding:12px 16px;background:var(--base2);border-bottom:1px solid var(--border);flex-shrink:0;">
+      <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;">
+        <span class="chip active" id="sort-near" onclick="setSort('near',this)">📍 Nearest</span>
+        <span class="chip" id="sort-rate" onclick="setSort('rate',this)">⭐ Rating</span>
+        <span class="chip" id="sort-new" onclick="setSort('new',this)">🆕 Newest</span>
+      </div>
+      <div style="display:flex;gap:7px;overflow-x:auto;margin-top:8px;">
+        <span class="chip active">All</span>
+        <span class="chip" onclick="toast('🩺 Filter: Doctors')">🩺 Doctor</span>
+        <span class="chip" onclick="toast('💻 Filter: Engineers')">💻 Engineer</span>
+        <span class="chip" onclick="toast('🔧 Filter: Mechanics')">🔧 Mechanic</span>
+        <span class="chip" onclick="toast('📸 Filter: Photographers')">📸 Photo</span>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- Candidate Card 1 -->
+      <div class="card" onclick="showProfile('Ananya Verma','Commercial Product Photographer','0.8 km','4.9','34','Indiranagar')">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div class="avatar" style="background:linear-gradient(135deg,#F97316,#EA580C);">📸</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:3px;">
+              <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--text);">Ananya Verma</span>
+              <span class="badge badge-green">✓ Verified</span>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Commercial Product Photographer</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="stars">
+                <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+              </div>
+              <span style="font-size:11px;color:var(--amber);font-weight:700;">4.9</span>
+              <span style="font-size:11px;color:var(--text-dim);">(34) · Indiranagar</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <p style="font-size:11px;font-weight:700;color:var(--purple);">0.8 km</p>
+            <p style="font-size:10px;color:var(--text-dim);">Available</p>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin:10px 0;line-height:1.5;">Specializes in product and e-commerce shoots. 6+ years experience. Studio available in locality.</p>
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+          <span class="chip" style="font-size:11px;padding:5px 10px;">📸 Product</span>
+          <span class="chip" style="font-size:11px;padding:5px 10px;">🎨 Editing</span>
+          <span class="chip" style="font-size:11px;padding:5px 10px;">📦 Ecommerce</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="event.stopPropagation();toast('💬 Opening chat...')">Message</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();goTo('s-request')">Connect</button>
+        </div>
+      </div>
+
+      <!-- Candidate Card 2 -->
+      <div class="card" onclick="showProfile('Priya Nair','General Physician','0.2 km','4.9','42','Jayanagar')">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div class="avatar" style="background:linear-gradient(135deg,#EF4444,#DC2626);">🩺</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:3px;">
+              <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--text);">Dr. Priya Nair</span>
+              <span class="badge badge-green">✓ Tier 3</span>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">General Physician · MCI Verified</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="stars">
+                <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+              </div>
+              <span style="font-size:11px;color:var(--amber);font-weight:700;">4.9</span>
+              <span style="font-size:11px;color:var(--text-dim);">(42) · Jayanagar</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <p style="font-size:11px;font-weight:700;color:var(--green);">0.2 km</p>
+            <p style="font-size:10px;color:var(--text-dim);">Available</p>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin:10px 0;line-height:1.5;">MBBS, MD. Providing general consultation. Nearest verified doctor in your locality.</p>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="event.stopPropagation();toast('💬 Opening chat...')">Message</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();goTo('s-request')">Connect</button>
+        </div>
+      </div>
+
+      <!-- Candidate Card 3 -->
+      <div class="card" onclick="showProfile('Rahul Dev','Full Stack Developer','0.4 km','4.7','18','Indiranagar')">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div class="avatar">💻</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:3px;">
+              <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--text);">Rahul Dev</span>
+              <span class="badge badge-purple">Tier 2</span>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Full Stack Developer</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="stars">
+                <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star" style="color:#475569;">★</span>
+              </div>
+              <span style="font-size:11px;color:var(--amber);font-weight:700;">4.7</span>
+              <span style="font-size:11px;color:var(--text-dim);">(18) · Indiranagar</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <p style="font-size:11px;font-weight:700;color:var(--purple);">0.4 km</p>
+            <p style="font-size:10px;color:var(--green);">Now</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="event.stopPropagation();toast('💬 Opening chat...')">Message</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();goTo('s-request')">Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn" onclick="goTo('s-home')"><span class="nav-icon">🗺️</span>Map</button>
+      <button class="nav-btn active"><span class="nav-icon">👥</span>Nearby</button>
+      <button class="nav-btn" onclick="goTo('s-messages')" style="position:relative;"><span class="nav-icon">💬</span>Messages<span class="notif-badge">2</span></button>
+      <button class="nav-btn" onclick="goTo('s-profile')"><span class="nav-icon">👤</span>Profile</button>
+    </div>
+  </div><!-- /nearby -->
+
+  <!-- ══════════ SCREEN: PROFILE DETAIL ══════════ -->
+  <div class="screen" id="s-profile-view">
+    <div class="appbar">
+      <button class="back" onclick="goTo('s-nearby')">‹</button>
+      <h2 id="pv-title">Profile</h2>
+      <button class="back" onclick="toast('🚩 Reported')">⋯</button>
+    </div>
+    <div class="body">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div id="pv-avatar" class="avatar avatar-lg" style="margin:0 auto 12px;background:linear-gradient(135deg,#F97316,#EA580C);">📸</div>
+        <h2 id="pv-name" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;color:var(--text);">Ananya Verma</h2>
+        <p id="pv-role" style="font-size:13px;color:var(--text-muted);margin-top:3px;">Commercial Product Photographer</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;">
+          <span id="pv-badge" class="badge badge-green">✓ Verified</span>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+        <div class="card" style="text-align:center;padding:12px;">
+          <p id="pv-rating" style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--purple);">4.9</p>
+          <p style="font-size:10px;color:var(--text-dim);">Rating</p>
+        </div>
+        <div class="card" style="text-align:center;padding:12px;">
+          <p id="pv-reviews" style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--purple);">34</p>
+          <p style="font-size:10px;color:var(--text-dim);">Reviews</p>
+        </div>
+        <div class="card" style="text-align:center;padding:12px;">
+          <p id="pv-dist" style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--purple);">0.8</p>
+          <p style="font-size:10px;color:var(--text-dim);">km away</p>
+        </div>
+      </div>
+
+      <!-- Trust notice -->
+      <div style="background:var(--green-bg);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:10px 14px;display:flex;gap:8px;margin-bottom:16px;">
+        <span>🛡️</span>
+        <span style="font-size:11px;color:var(--green);font-weight:600;">Locality: <span id="pv-locality">Indiranagar</span> · Exact address hidden. Contact unlocked on consent.</span>
+      </div>
+
+      <!-- Match explanation -->
+      <div class="card" style="margin-bottom:16px;">
+        <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;margin-bottom:10px;">Why this match?</p>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--text-muted);">Category Match</span>
+            <div style="display:flex;align-items:center;gap:6px;width:55%;">
+              <div class="score-bar" style="flex:1;"><div class="score-fill" style="width:95%;"></div></div>
+              <span style="color:var(--text);font-weight:700;font-size:11px;">95%</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--text-muted);">Proximity</span>
+            <div style="display:flex;align-items:center;gap:6px;width:55%;">
+              <div class="score-bar" style="flex:1;"><div class="score-fill" style="width:82%;"></div></div>
+              <span style="color:var(--text);font-weight:700;font-size:11px;">82%</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--text-muted);">Verification</span>
+            <div style="display:flex;align-items:center;gap:6px;width:55%;">
+              <div class="score-bar" style="flex:1;"><div class="score-fill" style="width:100%;"></div></div>
+              <span style="color:var(--text);font-weight:700;font-size:11px;">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost btn-block" onclick="goTo('s-chat')" style="flex:1;">💬 Message</button>
+        <button class="btn btn-primary btn-block" onclick="goTo('s-request')" style="flex:1;">Connect →</button>
+      </div>
+    </div>
+  </div><!-- /profile-view -->
+
+  <!-- ══════════ SCREEN: CONNECTION REQUEST ══════════ -->
   <div class="screen" id="s-request">
-    <div class="app-bar">
-      <button class="back-btn" onclick="goTo('s-results')">‹</button>
-      <h2>Connect with Ananya</h2>
-      <div style="width:32px;"></div>
+    <div class="appbar">
+      <button class="back" onclick="goTo('s-nearby')">‹</button>
+      <h2>Send Request</h2>
+      <div style="width:34px;"></div>
     </div>
-    <div class="screen-body">
-      <div class="trust-banner">
-        <span style="font-size:18px;">🛡️</span>
-        <span>Your contact information is shared only after mutual consent is granted. <strong>Safe and reliable.</strong></span>
+    <div class="body">
+      <div style="background:var(--green-bg);border:1px solid rgba(16,185,129,.2);border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:10px;margin-bottom:20px;">
+        <span>🛡️</span>
+        <span style="font-size:12px;color:var(--green);font-weight:600;line-height:1.4;">Contact info stays private until both of you agree to connect. Safe & consent-first.</span>
       </div>
 
-      <p style="font-weight:700;font-size:13px;margin-bottom:8px;">Introduce yourself / Task context</p>
-      <textarea rows="3" style="margin-bottom:16px;">Hello! I saw your profile on Nook and would like to connect regarding my product photography requirement for 500 SKUs this week.</textarea>
+      <p class="sec-label" style="margin-top:0;">Your message</p>
+      <textarea rows="4" style="margin-bottom:16px;">Hi! I saw your profile on Nook and would love to connect. I need product photography for 500 SKUs this week. Are you available?</textarea>
 
-      <p style="font-weight:700;font-size:13px;margin-bottom:8px;">Budget Range (Optional)</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+      <p class="sec-label">Budget range (optional)</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
         <span class="chip" onclick="setBudget(this)">₹5k–15k</span>
         <span class="chip active" onclick="setBudget(this)">₹15k–40k</span>
         <span class="chip" onclick="setBudget(this)">₹40k+</span>
+        <span class="chip" onclick="setBudget(this)">To discuss</span>
       </div>
 
-      <div class="trust-banner" style="background:#fff8e1;border-color:#ffe082;">
-        <span>ℹ️</span>
-        <span style="color:#a06000;">Once connected, you and Ananya can chat freely in-app or choose to meet/call offline. Nook's job ends at this connection — it does not manage the work, schedule, or payment.</span>
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:20px;">
+        <p style="font-size:12px;color:var(--amber);line-height:1.5;">ℹ️ Once connected, you can coordinate everything in-app or offline. Nook's job ends at this connection.</p>
       </div>
 
-      <button class="btn btn-primary btn-block" style="margin-top:8px;" onclick="sendRequest()">Send Connection Request</button>
+      <button class="btn btn-primary btn-block" onclick="sendRequest()">Send Connection Request →</button>
     </div>
-  </div><!-- /s-request -->
+  </div><!-- /request -->
 
-  <!-- ════════════ SCREEN 6: CHAT ════════════ -->
+  <!-- ══════════ SCREEN: MESSAGES ══════════ -->
+  <div class="screen" id="s-messages">
+    <div class="appbar">
+      <h2>Messages</h2>
+      <div style="width:34px;"></div>
+    </div>
+    <div class="body" style="padding:12px;">
+      <!-- Active connections -->
+      <p class="sec-label" style="padding:0 8px;">Active Connections</p>
+      <div class="card" onclick="goTo('s-chat')" style="cursor:pointer;display:flex;align-items:center;gap:12px;">
+        <div class="avatar" style="background:linear-gradient(135deg,#F97316,#EA580C);">📸</div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <p style="font-weight:700;font-size:14px;color:var(--text);">Ananya Verma</p>
+            <p style="font-size:11px;color:var(--text-dim);">10:36 AM</p>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Sure! I can visit your studio tomorrow...</p>
+          <p style="font-size:11px;color:var(--green);margin-top:3px;font-weight:600;">📞 +91 98765 ***** (unlocked)</p>
+        </div>
+        <span style="background:var(--purple);width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+      </div>
+      <div class="card" onclick="goTo('s-chat')" style="cursor:pointer;display:flex;align-items:center;gap:12px;">
+        <div class="avatar" style="background:linear-gradient(135deg,#EF4444,#DC2626);">🩺</div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <p style="font-weight:700;font-size:14px;color:var(--text);">Dr. Priya Nair</p>
+            <p style="font-size:11px;color:var(--text-dim);">Yesterday</p>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Happy to help. Feel free to call me on...</p>
+        </div>
+      </div>
+
+      <p class="sec-label">Pending Requests</p>
+      <div id="pending-card" class="card" style="border:1px solid rgba(139,92,246,.25);">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div class="avatar" style="background:linear-gradient(135deg,#A855F7,#9333EA);">🎉</div>
+          <div style="flex:1;">
+            <p style="font-weight:700;font-size:14px;color:var(--text);">Vikram Seth</p>
+            <p style="font-size:12px;color:var(--text-muted);">Event Decorator · BTM Layout</p>
+            <p style="font-size:12px;font-style:italic;margin:8px 0;color:var(--text-muted);">"Hi, saw your need for event decoration. Specialise in corporate setups — happy to connect."</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="declineReq()">Decline</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="acceptReq()">Accept →</button>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" onclick="goTo('s-home')"><span class="nav-icon">🗺️</span>Map</button>
+      <button class="nav-btn" onclick="goTo('s-nearby')"><span class="nav-icon">👥</span>Nearby</button>
+      <button class="nav-btn active"><span class="nav-icon">💬</span>Messages</button>
+      <button class="nav-btn" onclick="goTo('s-profile')"><span class="nav-icon">👤</span>Profile</button>
+    </div>
+  </div><!-- /messages -->
+
+  <!-- ══════════ SCREEN: CHAT ══════════ -->
   <div class="screen" id="s-chat">
-    <div class="app-bar">
-      <button class="back-btn" onclick="goTo('s-connections')">‹</button>
+    <div class="appbar">
+      <button class="back" onclick="goTo('s-messages')">‹</button>
       <div style="flex:1;text-align:center;">
-        <p style="font-weight:700;font-size:15px;">Ananya Verma</p>
-        <p style="font-size:11px;color:var(--text-gray);">Commercial Product Photographer</p>
+        <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--text);">Ananya Verma</p>
+        <p style="font-size:11px;color:var(--green);">● Online · Indiranagar</p>
       </div>
-      <button class="back-btn" onclick="toast('📞 In-app call initiated with Ananya...')">📞</button>
+      <button class="back" onclick="toast('📞 Initiating call with Ananya...')">📞</button>
     </div>
-    <!-- Consent Banner -->
-    <div style="background:var(--card);padding:10px 16px;border-bottom:1px solid var(--border);">
-      <div style="background:var(--bg);border-radius:var(--radius-pill);padding:7px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-gray);">
-        <span>🔒</span> Connection accepted. You can now chat and coordinate details freely.
-      </div>
+    <!-- Consent bar -->
+    <div style="background:var(--green-bg);padding:8px 16px;border-bottom:1px solid rgba(16,185,129,.1);flex-shrink:0;">
+      <p style="font-size:11px;color:var(--green);font-weight:600;text-align:center;">🔒 Connected · Contact details unlocked · Chat freely</p>
     </div>
-    <div class="screen-body" style="padding:0;">
-      <div class="msg-wrap">
-        <div style="display:flex;flex-direction:column;">
-          <div class="bubble bubble-them">Hi! Thanks for connecting. I am available for product photography shoots this week.</div>
-          <div class="bubble-time">10:32 AM</div>
+    <div class="body" style="padding:0;display:flex;flex-direction:column;gap:10px;" id="chat-msgs">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <div class="bubble bubble-them">Hi! Thanks for connecting. I'm available for product photography this week 📸</div>
+          <p class="btime">10:32 AM</p>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;">
-          <div class="bubble bubble-me">Great! We have 500 SKUs at our studio in Koramangala. Can we discuss timing?</div>
-          <div class="bubble-time">10:35 AM</div>
+        <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;">
+          <div class="bubble bubble-me">Amazing! We have 500 SKUs at our studio in Koramangala. Can we discuss timing and pricing?</div>
+          <p class="btime">10:34 AM</p>
         </div>
-        <div style="display:flex;flex-direction:column;">
-          <div class="bubble bubble-them">Sure! I can visit your studio tomorrow afternoon to understand the setup. Shall we say 3 PM?</div>
-          <div class="bubble-time">10:36 AM</div>
+        <div>
+          <div class="bubble bubble-them">Sure! I can come to your studio tomorrow at 3 PM to understand the setup. Does that work?</div>
+          <p class="btime">10:36 AM</p>
         </div>
-        <div style="display:flex;flex-direction:column;">
-          <div class="bubble bubble-them">📍 <em>From here we can talk offline — call, meet in person — Nook's job is done.</em></div>
+        <div style="text-align:center;padding:8px 16px;">
+          <span style="background:var(--card2);border-radius:var(--radius-pill);padding:6px 14px;font-size:11px;color:var(--text-dim);">From here — call, meet, or continue chatting 🤝</span>
         </div>
       </div>
     </div>
-    <!-- Input Bar -->
-    <div style="background:var(--card);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;">
-      <input type="text" id="chat-input" placeholder="Type a message..." style="flex:1;padding:10px 14px;" />
-      <button onclick="sendMsg()" style="width:44px;height:44px;border-radius:50%;background:var(--indigo);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">
-        <span style="transform:rotate(45deg);display:inline-block;">📤</span>
-      </button>
+    <!-- Input -->
+    <div style="background:var(--base2);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0;">
+      <input id="chat-input" type="text" placeholder="Type a message..." style="flex:1;padding:11px 15px;border-radius:var(--radius-pill);"/>
+      <button onclick="sendMsg()" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple2));border:none;cursor:pointer;font-size:16px;box-shadow:0 4px 12px var(--purple-glow);display:flex;align-items:center;justify-content:center;color:#fff;">↑</button>
     </div>
-  </div><!-- /s-chat -->
+  </div><!-- /chat -->
 
-  <!-- ════════════ SCREEN 7: CONNECTIONS LIST ════════════ -->
-  <div class="screen" id="s-connections">
-    <div class="app-bar">
-      <h2>Connections & Requests</h2>
+  <!-- ══════════ SCREEN: MY PROFILE ══════════ -->
+  <div class="screen" id="s-profile">
+    <div class="appbar">
+      <h2>My Profile</h2>
+      <button class="back" onclick="toast('⚙️ Settings')">⚙️</button>
     </div>
-    <!-- Tabs -->
-    <div style="display:flex;background:var(--card);border-bottom:1px solid var(--border);">
-      <button id="conn-tab" class="tab-btn active" style="flex:1;font-size:12px;padding:10px;" onclick="switchConnTab('active')">Active (2)</button>
-      <button id="req-tab" class="tab-btn" style="flex:1;font-size:12px;padding:10px;" onclick="switchConnTab('pending')">Pending Requests (1)</button>
-    </div>
-    <div class="screen-body" id="conn-body">
-      <!-- Active Connections -->
-      <div id="conn-active">
-        <div class="card" onclick="goTo('s-chat')" style="cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:20px;">👩</div>
-            <div style="flex:1;">
-              <p style="font-weight:700;font-size:14px;">Ananya Verma</p>
-              <p style="font-size:12px;color:var(--text-gray);">Photographer · Indiranagar</p>
-              <p style="font-size:11px;color:var(--trust-green);margin-top:2px;font-weight:600;">📞 +91 98765 43210 (unlocked)</p>
-            </div>
-            <span style="font-size:20px;">💬</span>
-          </div>
+    <div class="body">
+      <!-- Profile header -->
+      <div style="text-align:center;margin-bottom:20px;">
+        <div class="avatar avatar-lg" style="margin:0 auto 12px;">👩</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;color:var(--text);">Saurav Kumar</h2>
+        <p style="font-size:13px;color:var(--text-muted);">Koramangala, Bengaluru</p>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:8px;">
+          <span class="badge badge-green">✓ Tier 1 Verified</span>
         </div>
-        <div class="card" onclick="goTo('s-chat')" style="cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:20px;">👨</div>
-            <div style="flex:1;">
-              <p style="font-weight:700;font-size:14px;">Rajesh Kumar</p>
-              <p style="font-size:12px;color:var(--text-gray);">Electrician · Koramangala</p>
-              <p style="font-size:11px;color:var(--trust-green);margin-top:2px;font-weight:600;">📞 +91 98112 23344 (unlocked)</p>
-            </div>
-            <span style="font-size:20px;">💬</span>
-          </div>
-        </div>
-      </div>
-      <!-- Pending Requests (hidden initially) -->
-      <div id="conn-pending" style="display:none;">
-        <div class="card" id="pending-card">
-          <p style="font-weight:700;font-size:15px;">Vikram Seth</p>
-          <p style="font-size:12px;color:var(--text-gray);">Event Decorator · Whitefield, BLR</p>
-          <p style="font-size:13px;font-style:italic;margin:8px 0;">"Hi, saw your requirement for event decoration. I specialize in corporate events."</p>
-          <div style="display:flex;gap:10px;margin-top:4px;">
-            <button class="btn btn-outline btn-sm" style="flex:1;" onclick="declineReq()">Decline</button>
-            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="acceptReq()">Accept →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar">
-      <button class="tab-btn" onclick="goTo('s-home')"><span class="tab-icon">🏠</span>Home</button>
-      <button class="tab-btn" onclick="goTo('s-composer')"><span class="tab-icon">🔍</span>Search</button>
-      <button class="tab-btn active"><span class="tab-icon">💬</span>Messages</button>
-      <button class="tab-btn" onclick="goTo('s-verify')"><span class="tab-icon">👤</span>Profile</button>
-    </div>
-  </div><!-- /s-connections -->
-
-  <!-- ════════════ SCREEN 8: VERIFICATION ════════════ -->
-  <div class="screen" id="s-verify">
-    <div class="app-bar">
-      <h2>Verification & Profile</h2>
-    </div>
-    <div class="screen-body">
-      <div class="trust-banner">
-        <span>🛡️</span>
-        <span>Regulated professions (Doctors, CAs, Lawyers) <strong>must</strong> complete Tier 3 before their profile is discoverable.</span>
       </div>
 
-      <!-- Tier 1 -->
+      <!-- Verification Tiers -->
+      <p class="sec-label">Verification Status</p>
       <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:28px;height:28px;border-radius:50%;background:var(--trust-green-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--trust-green);">1</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green);">1</div>
+          <div style="flex:1;">
+            <p style="font-weight:700;font-size:13px;color:var(--text);">Tier 1 — Basic</p>
+            <p style="font-size:11px;color:var(--text-dim);">Phone OTP + KYC</p>
+          </div>
+          <span style="font-size:16px;color:var(--green);">✓</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);" id="t2-row">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--purple-soft);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--purple);">2</div>
+          <div style="flex:1;">
+            <p style="font-weight:700;font-size:13px;color:var(--text);">Tier 2 — Skilled Provider</p>
+            <p style="font-size:11px;color:var(--text-dim);">ID + peer signals</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="upgradeTier(2)" style="font-size:11px;padding:6px 12px;">Upgrade</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;" id="t3-row">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text-dim);">3</div>
+          <div style="flex:1;">
+            <p style="font-weight:700;font-size:13px;color:var(--text);">Tier 3 — Regulated</p>
+            <p style="font-size:11px;color:var(--text-dim);">License / Registration Number</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="upgradeTier(3)" style="font-size:11px;padding:6px 12px;">Submit</button>
+        </div>
+      </div>
+
+      <p class="sec-label">Privacy Settings</p>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <div>
-            <p style="font-weight:700;font-size:14px;">Tier 1 — Basic Verification</p>
-            <p style="font-size:12px;color:var(--text-gray);">Phone OTP + KYC → basic badge</p>
+            <p style="font-weight:700;font-size:13px;color:var(--text);">Hide Exact Location</p>
+            <p style="font-size:11px;color:var(--text-dim);">Only show locality name</p>
           </div>
+          <button class="toggle"></button>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--trust-green);">
-          ✅ Phone OTP Verified (+91 98765 *****) — Complete
-        </div>
-      </div>
-
-      <!-- Tier 2 -->
-      <div class="card" id="tier2-card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:28px;height:28px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--indigo);">2</div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <p style="font-weight:700;font-size:14px;">Tier 2 — Skilled Provider Badge</p>
-            <p style="font-size:12px;color:var(--text-gray);">ID + peer signals → provider badge</p>
+            <p style="font-weight:700;font-size:13px;color:var(--text);">Discoverable</p>
+            <p style="font-size:11px;color:var(--text-dim);">Appear in nearby results</p>
           </div>
-        </div>
-        <button class="btn btn-outline btn-sm btn-block" onclick="upgradeTier2()">⬆ Upgrade to Tier 2</button>
-      </div>
-
-      <!-- Tier 3 -->
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text-gray);">3</div>
-          <div>
-            <p style="font-weight:700;font-size:14px;">Tier 3 — Regulated Professional</p>
-            <p style="font-size:12px;color:var(--text-gray);">License/registration number + identity → mandatory before profile publish</p>
-          </div>
-        </div>
-        <input type="text" placeholder="Enter License / Registration No. (e.g. MCI-98765)" style="margin-bottom:10px;" />
-        <button class="btn btn-primary btn-sm btn-block" onclick="upgradeTier3()">Submit Tier 3 Verification</button>
-      </div>
-    </div>
-    <div class="bottom-bar">
-      <button class="tab-btn" onclick="goTo('s-home')"><span class="tab-icon">🏠</span>Home</button>
-      <button class="tab-btn" onclick="goTo('s-composer')"><span class="tab-icon">🔍</span>Search</button>
-      <button class="tab-btn" onclick="goTo('s-connections')"><span class="tab-icon">💬</span>Messages</button>
-      <button class="tab-btn active"><span class="tab-icon">👤</span>Profile</button>
-    </div>
-  </div><!-- /s-verify -->
-
-  <!-- ════════════ SCREEN 9: ADMIN DASHBOARD ════════════ -->
-  <div class="screen" id="s-admin">
-    <div class="app-bar">
-      <button class="back-btn" onclick="goTo('s-home')">‹</button>
-      <h2>Admin / Concierge</h2>
-      <div style="width:32px;"></div>
-    </div>
-    <div class="screen-body">
-      <!-- Locality Launch -->
-      <div class="card">
-        <p style="font-weight:700;font-size:15px;margin-bottom:10px;">📍 Locality Launch Mode</p>
-        <div class="metric-row"><span class="metric-label">Active Locality</span><span class="metric-val">Koramangala, BLR</span></div>
-        <div class="metric-row"><span class="metric-label">Status</span><span class="metric-val" style="color:var(--trust-green);">LAUNCHED</span></div>
-        <div class="metric-row"><span class="metric-label">Providers</span><span class="metric-val">124</span></div>
-        <div class="metric-row"><span class="metric-label">Seekers</span><span class="metric-val">89</span></div>
-        <div style="margin-top:10px;padding:8px;background:rgba(255,150,0,.1);border-radius:8px;font-size:12px;color:#a06000;font-weight:600;">
-          ⚠️ Supply Gap: Event Decorators & Doctors — low density
+          <button class="toggle" style="background:var(--purple);"></button>
         </div>
       </div>
 
-      <!-- Analytics Funnel -->
-      <div class="card">
-        <p style="font-weight:700;font-size:15px;margin-bottom:10px;">📊 Conversion Funnel</p>
-        <div class="metric-row"><span class="metric-label">Needs Submitted</span><span class="metric-val">42</span></div>
-        <div class="metric-row"><span class="metric-label">Connection Requests Sent</span><span class="metric-val">38</span></div>
-        <div class="metric-row"><span class="metric-label">Requests Accepted</span><span class="metric-val">31</span></div>
-        <div class="metric-row"><span class="metric-label">Funnel Conversion Rate</span><span class="metric-val">81.5%</span></div>
-      </div>
-
-      <!-- Validation Workspace -->
-      <div class="card">
-        <p style="font-weight:700;font-size:15px;margin-bottom:10px;">📋 Validation Workspace</p>
-        <div class="metric-row"><span class="metric-label">Respondents Approached</span><span class="metric-val">24 / 25</span></div>
-        <div class="metric-row"><span class="metric-label">Top Trust Concern</span><span class="metric-val" style="font-size:12px;">Exact address exposed</span></div>
-        <div class="metric-row"><span class="metric-label">Willingness to Use Nook</span><span class="metric-val" style="color:var(--trust-green);">92% HIGH</span></div>
-      </div>
-
-      <!-- Provider Seeding -->
-      <div class="card">
-        <p style="font-weight:700;font-size:15px;margin-bottom:8px;">🌱 Provider Seeding</p>
-        <p style="font-size:13px;color:var(--text-gray);margin-bottom:10px;">Invite professionals to join this locality via referral code.</p>
-        <button class="btn btn-outline btn-sm btn-block" onclick="toast('Seeding code generated: NOOK-KOR-2026')">Generate Invite Code</button>
-      </div>
+      <button class="btn btn-ghost btn-block" onclick="goTo('s-onboard')" style="margin-top:8px;color:var(--red);border-color:rgba(239,68,68,.2);">Sign Out</button>
     </div>
-  </div><!-- /s-admin -->
+    <div class="nav">
+      <button class="nav-btn" onclick="goTo('s-home')"><span class="nav-icon">🗺️</span>Map</button>
+      <button class="nav-btn" onclick="goTo('s-nearby')"><span class="nav-icon">👥</span>Nearby</button>
+      <button class="nav-btn" onclick="goTo('s-messages')" style="position:relative;"><span class="nav-icon">💬</span>Messages<span class="notif-badge">2</span></button>
+      <button class="nav-btn active"><span class="nav-icon">👤</span>Profile</button>
+    </div>
+  </div><!-- /profile -->
 
-</div><!-- /phone-frame -->
+</div><!-- /phone -->
 
 <script>
-/* ────────────────────── State & Navigation ────────────────────── */
-let currentRole = 'seeker';
+/* Clock */
+function tick(){
+  const n=new Date();
+  document.getElementById('clock').textContent=
+    String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+tick();setInterval(tick,30000);
 
-function goTo(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+/* Navigation */
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
 }
 
-function toast(msg) {
-  const el = document.getElementById('snack');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2600);
+/* Toast */
+function toast(msg){
+  const el=document.getElementById('snack');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
 }
 
-/* Live Clock */
-function updateClock() {
-  const now = new Date();
-  document.getElementById('time-display').textContent =
-    now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-}
-updateClock();
-setInterval(updateClock, 30000);
-
-/* Role Selection */
-function selectRole(role) {
-  currentRole = role;
-  const seekCard = document.getElementById('role-seek');
-  const provCard = document.getElementById('role-prov');
-  const provCheck = document.getElementById('prov-check');
-  if (role === 'seeker') {
-    seekCard.style.border = '2px solid var(--indigo)';
-    seekCard.style.borderColor = 'var(--indigo)';
-    seekCard.querySelector('span:last-child').style.color = 'var(--indigo)';
-    provCard.style.border = '1.5px solid var(--border)';
-    provCheck.style.color = 'transparent';
-    seekCard.querySelector('p').style.color = 'var(--indigo)';
-    provCard.querySelector('p').style.color = 'var(--text-dark)';
-  } else {
-    provCard.style.border = '2px solid var(--indigo)';
-    provCheck.style.color = 'var(--indigo)';
-    provCard.querySelector('p').style.color = 'var(--indigo)';
-    seekCard.style.border = '1.5px solid var(--border)';
-    seekCard.querySelector('span:last-child').style.color = 'transparent';
-    seekCard.querySelector('p').style.color = 'var(--text-dark)';
-  }
+/* Role selection */
+function setRole(role){
+  document.getElementById('role-seek').classList.toggle('active',role==='seeker');
+  document.getElementById('role-prov').classList.toggle('active',role==='provider');
 }
 
-/* Urgency selection */
-function setUrgency(val, el) {
-  ['urg-imm', 'urg-week', 'urg-flex'].forEach(id => {
-    document.getElementById(id).classList.remove('active');
-  });
+/* OTP flow */
+function sendOTP(){toast('📱 OTP sent to +91 98765 43210');}
+function otpNext(el,nextId){
+  if(el.value.length===1)document.getElementById(nextId).focus();
+}
+function otpDone(el){
+  if(el.value.length===1){toast('✅ Phone verified!');setTimeout(()=>goTo('s-profile-setup'),600);}
+}
+
+/* Sort pills */
+function setSort(type,el){
+  ['sort-near','sort-rate','sort-new'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  el.classList.add('active');
+  toast({near:'📍 Sorted: Nearest',rate:'⭐ Sorted: Top Rated',new:'🆕 Sorted: Newest'}[type]);
+}
+
+/* Budget chips */
+function setBudget(el){
+  el.closest('.body').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
 }
 
-/* Budget selection */
-function setBudget(el) {
-  el.closest('.screen-body').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
+/* Toggle chips */
+function toggleChip(el){el.classList.toggle('active');}
+
+/* Show profile detail */
+function showProfile(name,role,dist,rating,reviews,locality){
+  document.getElementById('pv-name').textContent=name;
+  document.getElementById('pv-role').textContent=role;
+  document.getElementById('pv-title').textContent=name.split(' ')[0];
+  document.getElementById('pv-dist').textContent=parseFloat(dist);
+  document.getElementById('pv-rating').textContent=rating;
+  document.getElementById('pv-reviews').textContent=reviews;
+  document.getElementById('pv-locality').textContent=locality;
+  goTo('s-profile-view');
 }
 
-/* Quick Category Search */
-function quickSearch(cat) {
-  document.getElementById('need-text').value = `I need a ${cat} in my locality`;
-  document.getElementById('results-title').textContent = cat;
-  goTo('s-results');
+/* Send connection request */
+function sendRequest(){
+  toast('✅ Connection request sent!');
+  setTimeout(()=>goTo('s-chat'),1200);
 }
 
-/* Submit Need */
-function submitNeed() {
-  const txt = document.getElementById('need-text').value.trim();
-  if (!txt) { toast('⚠️ Please describe your need first.'); return; }
-  const lower = txt.toLowerCase();
-  let cat = 'Service Needed';
-  if (lower.includes('photo')) cat = 'Product Photography';
-  else if (lower.includes('electric')) cat = 'Electrician';
-  else if (lower.includes('plumb')) cat = 'Plumber';
-  else if (lower.includes('tutor') || lower.includes('teach')) cat = 'Tutor / Educator';
-  else if (lower.includes('decorat')) cat = 'Event Decorator';
-  else if (lower.includes('mechanic')) cat = 'Mechanic';
-  document.getElementById('results-title').textContent = cat + ' Nearby';
-  toast('✨ Parsed: category = ' + cat);
-  setTimeout(() => goTo('s-results'), 600);
-}
-
-/* Send Connection Request */
-function sendRequest() {
-  toast('✅ Connection request sent to Ananya!');
-  setTimeout(() => goTo('s-chat'), 1200);
-}
-
-/* Match Feedback */
-function feedback(type) {
-  const emoji = {Useful:'👍',TooFar:'📍','Not Relevant':'👎','Not Trustworthy':'⚠️',Unavailable:'⏳'};
-  toast((emoji[type] || '📝') + ' Feedback recorded: ' + type);
-}
-
-/* Send Chat Message */
-function sendMsg() {
-  const inp = document.getElementById('chat-input');
-  if (!inp.value.trim()) return;
-  const wrap = document.querySelector('#s-chat .msg-wrap');
-  const div = document.createElement('div');
-  div.style.display = 'flex'; div.style.flexDirection = 'column'; div.style.alignItems = 'flex-end';
-  div.innerHTML = `<div class="bubble bubble-me">${inp.value}</div><div class="bubble-time" style="color:var(--text-gray)">Just now</div>`;
-  wrap.appendChild(div);
-  inp.value = '';
-  div.scrollIntoView({behavior:'smooth'});
-}
-
-/* Connection Tabs */
-function switchConnTab(tab) {
-  if (tab === 'active') {
-    document.getElementById('conn-active').style.display = 'block';
-    document.getElementById('conn-pending').style.display = 'none';
-    document.getElementById('conn-tab').classList.add('active');
-    document.getElementById('req-tab').classList.remove('active');
-  } else {
-    document.getElementById('conn-active').style.display = 'none';
-    document.getElementById('conn-pending').style.display = 'block';
-    document.getElementById('req-tab').classList.add('active');
-    document.getElementById('conn-tab').classList.remove('active');
-  }
-}
-
-/* Accept / Decline Request */
-function acceptReq() {
-  document.getElementById('pending-card').innerHTML = `<div style="text-align:center;padding:12px;color:var(--trust-green);font-weight:700;font-size:14px;">✅ Connection accepted! Chat and contact details unlocked.</div>`;
-  toast('🎉 Connection with Vikram Seth accepted!');
-  document.getElementById('req-tab').textContent = 'Pending Requests (0)';
-}
-function declineReq() {
-  document.getElementById('pending-card').innerHTML = `<div style="text-align:center;padding:12px;color:var(--text-gray);font-size:13px;">Request declined and removed.</div>`;
-  document.getElementById('req-tab').textContent = 'Pending Requests (0)';
-}
-
-/* Verification Upgrades */
-function upgradeTier2() {
-  document.getElementById('tier2-card').innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <div style="width:28px;height:28px;border-radius:50%;background:var(--trust-green-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--trust-green);">2</div>
+/* Accept / Decline pending */
+function acceptReq(){
+  document.getElementById('pending-card').innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="avatar" style="background:linear-gradient(135deg,#A855F7,#9333EA);width:44px;height:44px;font-size:20px;">🎉</div>
       <div>
-        <p style="font-weight:700;font-size:14px;">Tier 2 — Skilled Provider Badge</p>
-        <p style="font-size:12px;color:var(--text-gray);">ID + peer signals → provider badge</p>
+        <p style="font-weight:700;font-size:14px;color:var(--text);">Vikram Seth</p>
+        <p style="font-size:12px;color:var(--green);font-weight:600;">✅ Connected — chat & contact unlocked!</p>
       </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--trust-green);">✅ Tier 2 Skilled Provider Badge Active</div>`;
-  toast('🏅 Tier 2 Skilled Provider Verification complete!');
+    </div>`;
+  toast('🎉 Connection accepted with Vikram Seth!');
 }
-function upgradeTier3() {
-  toast('🏛️ Tier 3 License submitted for regulated verification!');
+function declineReq(){
+  document.getElementById('pending-card').innerHTML=`<p style="text-align:center;padding:12px;font-size:13px;color:var(--text-dim);">Request declined and removed.</p>`;
 }
+
+/* Send chat message */
+function sendMsg(){
+  const inp=document.getElementById('chat-input');
+  if(!inp.value.trim())return;
+  const msgs=document.querySelector('#s-chat .body>div');
+  const div=document.createElement('div');
+  div.style.cssText='align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;';
+  div.innerHTML=`<div class="bubble bubble-me">${inp.value}</div><p class="btime">Just now</p>`;
+  msgs.appendChild(div);
+  inp.value='';
+  msgs.parentElement.scrollTop=999999;
+}
+
+/* Verification upgrade */
+function upgradeTier(n){
+  toast(n===2?'🏅 Tier 2 verification initiated! ID upload required.':'🏛️ Tier 3 license submission sent for review.');
+}
+
+/* Slider update (if any) */
+document.querySelectorAll('input[type=range]').forEach(s=>{
+  s.addEventListener('input',()=>{
+    const label=s.nextElementSibling;
+    if(label&&label.classList.contains('radius-val'))label.textContent=s.value+' km';
+  });
+});
 </script>
 </body>
 </html>
